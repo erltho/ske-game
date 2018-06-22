@@ -1,0 +1,27 @@
+{
+  "name": "ske-game",
+  "groupId": "no.skatteetaten.aurora",
+  "version": "0.1.0",
+  "private": false,
+  "author": {
+    "name": "Skatteetaten"
+  },
+  "files": [
+    "src",
+    "metadata"
+  ],
+  "devDependencies": {
+    "prettier": "^1.11.0",
+    "rimraf": "^2.6.2"
+  },
+  "scripts": {
+    "clean": "rimraf build coverage pom *.tgz",
+    "lint:prettier": "prettier -l '{api,src}/**/*{.js,.jsx,.css'",
+    "lint:prettier-fix": "prettier --write '{api,src}/**/*{.js,.jsx,.css}'"
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}
+
+

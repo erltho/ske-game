@@ -1,0 +1,14 @@
+{
+  "docker": {
+    "maintainer": "Kim Lindtner <kim.lindtner@skatteetaten.no>",
+    "labels": {
+      "io.k8s.description": "Skatteetaten game",
+      "io.openshift.tags": "openshift,nodejs"
+    }
+  },
+  "web": {
+    "webapp": {
+      "content": "src"
+    }
+  }
+}
