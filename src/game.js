@@ -1,11 +1,16 @@
 let myGamePiece;
 let myObstacles = [];
 const playerSpeed = 2;
+let myScore;
+let myBackground;
 
 function startGame() {
-  myObstacles = []; // it is very important to do this before starting the game
-  myGameArea.start();
+  myObstacles = []; // it is very important to do this before starting the game for restart to work
+  // myBackground = new component(800, 600, "../assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
+  myScore = new component("30px", "Consolas", "black", 280, 40, "text");
   myGamePiece = new component(30, 30, "red", 10, 120);
+  // myGamePiece = new component(30, 30, "../assets/img/player/smiley.gif", 10, 120, "image");
+  myGameArea.start();
 }
 
 function restart() {
@@ -41,7 +46,12 @@ let myGameArea = {
 };
 
 // Game-pieces
-function component(width, height, color, x, y) {
+function component(width, height, color, x, y, type) {
+  this.type = type;
+  if (type === "image" || type === "background") {
+    this.image = new Image();
+    this.image.src = color;
+  }
   this.width = width;
   this.height = height;
   this.speedX = 0;
@@ -50,12 +60,32 @@ function component(width, height, color, x, y) {
   this.y = y;
   this.update = function () {
     ctx = myGameArea.context;
-    ctx.fillStyle = color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    if (this.type === "text") {
+      ctx.font = this.width + " " + this.height;
+      ctx.fillStyle = color;
+      ctx.fillText(this.text, this.x, this.y);
+    } else if (type === "image" || type === "background") {
+      ctx.drawImage(this.image,
+        this.x,
+        this.y,
+        this.width, this.height);
+      if (type === "background") {
+        ctx.drawImage(this.image,
+          this.x + this.width, this.y, this.width, this.height);
+      }
+    } else {
+      ctx.fillStyle = color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
   };
   this.newPos = function () {
     this.x += this.speedX;
     this.y += this.speedY;
+    if (this.type === "background") {
+      if (this.x === -(this.width)) {
+        this.x = 0;
+      }
+    }
   };
   this.crashWith = function (otherobj) {
     let myleft = this.x;
@@ -86,6 +116,11 @@ function updateGameArea() {
 
   myGameArea.clear();
   myGameArea.frameNo += 1;
+
+
+  // myBackground.speedX = -1;
+  // myBackground.newPos();
+  // myBackground.update();
 
   // create obstacles
   if (myGameArea.frameNo === 1 || everyinterval(150)) {
@@ -118,6 +153,8 @@ function updateGameArea() {
   if (myGameArea.keys && myGameArea.keys[40] && myGamePiece.y <= (myGameArea.canvas.height - myGamePiece.height - playerSpeed)) {
     myGamePiece.speedY = playerSpeed;
   }
+  myScore.text = "SCORE: " + myGameArea.frameNo;
+  myScore.update();
   myGamePiece.newPos();
   myGamePiece.update();
 }
