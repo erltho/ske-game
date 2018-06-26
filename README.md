@@ -12,4 +12,11 @@ w3schools - https://www.w3schools.com for tutorials and examples
 Co-workers:  
 Espen S  
 Marie A  
-Bent Andre S 
+Bent Andre S
+
+**Background**  
+"GLACIAL MOUNTAINS PARALLAX BACKGROUND"  
+Pixel Art for background created by Vicente Nitti (@vnitti)  
+Twitter:   https://twitter.com/vnitti_art  
+Itch.io:   https://vnitti.itch.io/  
+Portfolio: https://vnitti.wixsite.com/site
