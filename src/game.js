@@ -4,14 +4,19 @@ const playerSpeed = 2;
 let myScore;
 let myBackground;
 
+let prng = new MersenneTwister(123);
+console.log(prng.random());
+
 function startGame() {
   myObstacles = []; // it is very important to do this before starting the game for restart to work
-  // myBackground = new component(800, 600, "../assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
+  myBackground = new component(800, 600, "assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
   myScore = new component("30px", "Consolas", "black", 280, 40, "text");
-  myGamePiece = new component(30, 30, "red", 10, 120);
-  // myGamePiece = new component(30, 30, "../assets/img/player/smiley.gif", 10, 120, "image");
+  // myGamePiece = new component(30, 30, "red", 10, 120);
+  myGamePiece = new component(30, 30, "assets/img/player/smiley.gif", 10, 120, "image");
   myGameArea.start();
 }
+
+console.log("Game started!")
 
 function restart() {
   myGameArea.stop();
@@ -117,10 +122,9 @@ function updateGameArea() {
   myGameArea.clear();
   myGameArea.frameNo += 1;
 
-
-  // myBackground.speedX = -1;
-  // myBackground.newPos();
-  // myBackground.update();
+  myBackground.speedX = -1;
+  myBackground.newPos();
+  myBackground.update();
 
   // create obstacles
   if (myGameArea.frameNo === 1 || everyinterval(150)) {

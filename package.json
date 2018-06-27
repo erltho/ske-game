@@ -21,7 +21,6 @@
   },
   "prettier": {
     "singleQuote": true
-  }
+  },
+  "dependencies": {}
 }
-
-
