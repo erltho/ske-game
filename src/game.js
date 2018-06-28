@@ -1,39 +1,79 @@
-let myGamePiece;
-let myObstacles = [];
-const playerSpeed = 2;
-let myScore;
-let myBackground;
+// Canvas
+const CANVAS_WIDTH = 800; // Default 800
+const CANVAS_HEIGHT = 600; // Default 600
+const FRAME_SPEED_IN_MS = 15; // Default 15
 
-let prng = new MersenneTwister(123);
-console.log(prng.random());
+// Obstacle
+const OBSTACLE_WIDTH = 10; // Default 10
+const OBSTACLE_MIN_HEIGHT = 10; // Default 10
+const OBSTACLE_MAX_HEIGHT = 450; // Default 450
+const OBSTACLE_MIN_GAP = 50; // Default 50
+const OBSTACLE_MAX_GAP = 150; // Default 150
+const OBSTACLE_MIN_DISTANCE = 140; // Default 140
+const OBSTACLE_DISTANCE_VARIETY_FACTOR = 30; // Default 30
+
+// Player
+const PLAYER_MOVEMENT_AREA = 140; // Default 140
+const PLAYER_SPEED = 2; // Default 2
+const PLAYER_START_X = 10; // Default 10
+const PLAYER_START_Y = 120; // Default 120
+const PLAYER_WIDTH = 30; // Default 30
+const PLAYER_HEIGHT = 30; // Default 30
+
+// Opponent
+const OPPONENT_HEIGHT = 30; // Default 30
+const OPPONENT_WIDTH = 30; // Default 30
+const OPPONENT_DIST_FROM_R_EDGE = 150; // Default 250
+
+
+let myObstacles = [];
+let myBackground;
+let myPlayerPiece;
+let myOpponentPiece;
+let myScore;
 
 function startGame() {
-  myObstacles = []; // it is very important to do this before starting the game for restart to work
-  myBackground = new component(800, 600, "assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
+  let prng = new MersenneTwister(1337);
+  myObstacles = [];
+  myBackground = new component(CANVAS_WIDTH, CANVAS_HEIGHT, "assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
   myScore = new component("30px", "Consolas", "black", 280, 40, "text");
-  // myGamePiece = new component(30, 30, "red", 10, 120);
-  myGamePiece = new component(30, 30, "assets/img/player/smiley.gif", 10, 120, "image");
-  myGameArea.start();
+  myOpponentPiece = new component(OPPONENT_WIDTH, OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, 250);
+  myPlayerPiece = new component(PLAYER_WIDTH, PLAYER_HEIGHT, "assets/img/player/smiley.gif", PLAYER_START_X, PLAYER_START_Y, "image");
+  myGameArea.start(prng);
 }
 
-console.log("Game started!")
+console.log("Game started!");
 
+// Restart game
 function restart() {
   myGameArea.stop();
   myGameArea.clear();
   startGame();
 }
 
+// Give each frame access to prng
+function updateGameAreaWithRng(prng) {
+  return function () {
+    updateGameArea(prng)
+  }
+
+}
+
+// Decides when a new obstacle is drawn
+function everyinterval() {
+  return (myGameArea.frameNo / OBSTACLE_MIN_DISTANCE) % 1 === 0;
+}
+
 // Canvas
 let myGameArea = {
   canvas: document.createElement("canvas"),
-  start: function () {
-    this.canvas.width = 800;
-    this.canvas.height = 600;
+  start: function (prng) {
+    this.canvas.width = CANVAS_WIDTH;
+    this.canvas.height = CANVAS_HEIGHT;
     this.context = this.canvas.getContext("2d");
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     this.frameNo = 0;
-    this.interval = setInterval(updateGameArea, 15);
+    this.interval = setInterval(updateGameAreaWithRng(prng), FRAME_SPEED_IN_MS);
     window.addEventListener('keydown', function (e) {
       myGameArea.keys = (myGameArea.keys || []);
       myGameArea.keys[e.keyCode] = (e.type === "keydown");
@@ -69,11 +109,15 @@ function component(width, height, color, x, y, type) {
       ctx.font = this.width + " " + this.height;
       ctx.fillStyle = color;
       ctx.fillText(this.text, this.x, this.y);
-    } else if (type === "image" || type === "background") {
+    }
+    // Draws images and background
+    else if (type === "image" || type === "background") {
       ctx.drawImage(this.image,
         this.x,
         this.y,
         this.width, this.height);
+
+      // Background needs to be drawn twice for loop to work
       if (type === "background") {
         ctx.drawImage(this.image,
           this.x + this.width, this.y, this.width, this.height);
@@ -83,15 +127,21 @@ function component(width, height, color, x, y, type) {
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
   };
+
+  // Moves components depending on their speed
   this.newPos = function () {
     this.x += this.speedX;
     this.y += this.speedY;
+
+    // Redraws the background when it has looped through
     if (this.type === "background") {
       if (this.x === -(this.width)) {
         this.x = 0;
       }
     }
   };
+
+  // Component interaction
   this.crashWith = function (otherobj) {
     let myleft = this.x;
     let myright = this.x + (this.width);
@@ -109,61 +159,67 @@ function component(width, height, color, x, y, type) {
   }
 }
 
-// Draw
-function updateGameArea() {
-  let x, y;
+// This code executes each frame
+function updateGameArea(prng) {
+  let x;
+
+  // Collision
   for (i = 0; i < myObstacles.length; i += 1) {
-    if (myGamePiece.crashWith(myObstacles[i])) {
+    if (myPlayerPiece.crashWith(myObstacles[i])) {
       myGameArea.stop();
       return;
     }
   }
 
+  // Next frame
   myGameArea.clear();
   myGameArea.frameNo += 1;
 
+  // Background
   myBackground.speedX = -1;
   myBackground.newPos();
   myBackground.update();
 
-  // create obstacles
-  if (myGameArea.frameNo === 1 || everyinterval(150)) {
-    x = myGameArea.canvas.width;
-    minHeight = 20;
-    maxHeight = 200;
-    height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
-    minGap = 50;
-    maxGap = 200;
-    gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
-    myObstacles.push(new component(10, height, "green", x, 0));
-    myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+  // Obstacles
+  if (myGameArea.frameNo === 1 || everyinterval()) {
+    x = myGameArea.canvas.width + (OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1));
+    height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT);
+    gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
+    myObstacles.push(new component(OBSTACLE_WIDTH, height, "green", x, 0));
+    myObstacles.push(new component(OBSTACLE_WIDTH, x - height - gap, "green", x, height + gap));
   }
   for (i = 0; i < myObstacles.length; i += 1) {
     myObstacles[i].x += -1;
     myObstacles[i].update();
   }
 
-  myGamePiece.speedX = 0;
-  myGamePiece.speedY = 0;
-  if (myGameArea.keys && myGameArea.keys[37] && myGamePiece.x >= playerSpeed) {
-    myGamePiece.speedX = -playerSpeed;
+  // Player
+  myPlayerPiece.speedX = 0;
+  myPlayerPiece.speedY = 0;
+  if (myGameArea.keys && myGameArea.keys[37] && myPlayerPiece.x >= PLAYER_SPEED) {
+    myPlayerPiece.speedX = -PLAYER_SPEED;
   }
-  if (myGameArea.keys && myGameArea.keys[39] && myGamePiece.x <= 100) {
-    myGamePiece.speedX = playerSpeed;
+  if (myGameArea.keys && myGameArea.keys[39] && myPlayerPiece.x <= PLAYER_MOVEMENT_AREA) {
+    myPlayerPiece.speedX = PLAYER_SPEED;
   }
-  if (myGameArea.keys && myGameArea.keys[38] && myGamePiece.y >= playerSpeed) {
-    myGamePiece.speedY = -playerSpeed;
+  if (myGameArea.keys && myGameArea.keys[38] && myPlayerPiece.y >= PLAYER_SPEED) {
+    myPlayerPiece.speedY = -PLAYER_SPEED;
   }
-  if (myGameArea.keys && myGameArea.keys[40] && myGamePiece.y <= (myGameArea.canvas.height - myGamePiece.height - playerSpeed)) {
-    myGamePiece.speedY = playerSpeed;
+  if (myGameArea.keys && myGameArea.keys[40] && myPlayerPiece.y <= (myGameArea.canvas.height - myPlayerPiece.height - PLAYER_SPEED)) {
+    myPlayerPiece.speedY = PLAYER_SPEED;
   }
+  myPlayerPiece.newPos();
+  myPlayerPiece.update();
+
+  // Opponent
+  myOpponentPiece.speedY = 3;
+  myOpponentPiece.newPos();
+  myOpponentPiece.update();
+
+  // Score
   myScore.text = "SCORE: " + myGameArea.frameNo;
   myScore.update();
-  myGamePiece.newPos();
-  myGamePiece.update();
 }
 
-function everyinterval(n) {
-  return (myGameArea.frameNo / n) % 1 === 0;
 
-}
+
