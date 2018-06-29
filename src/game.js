@@ -23,21 +23,26 @@ const PLAYER_HEIGHT = 30; // Default 30
 // Opponent
 const OPPONENT_HEIGHT = 30; // Default 30
 const OPPONENT_WIDTH = 30; // Default 30
-const OPPONENT_DIST_FROM_R_EDGE = 150; // Default 250
+const OPPONENT_DIST_FROM_R_EDGE = 50; // Default 250
+const OPPONENT_START_Y = 0; // Default 250
 
 
 let myObstacles = [];
 let myBackground;
 let myPlayerPiece;
 let myOpponentPiece;
+let myOpponentPieceHitbox;
 let myScore;
+
+
+let foo = 0;
 
 function startGame() {
   let prng = new MersenneTwister(1337);
   myObstacles = [];
   myBackground = new component(CANVAS_WIDTH, CANVAS_HEIGHT, "assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
   myScore = new component("30px", "Consolas", "black", 280, 40, "text");
-  myOpponentPiece = new component(OPPONENT_WIDTH, OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, 250);
+  myOpponentPiece = new component( OPPONENT_WIDTH , OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y);
   myPlayerPiece = new component(PLAYER_WIDTH, PLAYER_HEIGHT, "assets/img/player/smiley.gif", PLAYER_START_X, PLAYER_START_Y, "image");
   myGameArea.start(prng);
 }
@@ -141,35 +146,89 @@ function component(width, height, color, x, y, type) {
     }
   };
 
-  // Component interaction
+  // Component crash interaction
   this.crashWith = function (otherobj) {
-    let myleft = this.x;
-    let myright = this.x + (this.width);
-    let mytop = this.y;
-    let mybottom = this.y + (this.height);
-    let otherleft = otherobj.x;
-    let otherright = otherobj.x + (otherobj.width);
-    let othertop = otherobj.y;
-    let otherbottom = otherobj.y + (otherobj.height);
-    let crash = true;
-    if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+    let myLeft = this.x;
+    let myRight = this.x + (this.width);
+    let myTop = this.y;
+    let myBottom = this.y + (this.height);
+    let otherLeft = otherobj.x;
+    let otherRight = otherobj.x + (otherobj.width);
+    let otherTop = otherobj.y;
+    let otherBottom = otherobj.y + (otherobj.height);
+    let crash = false;
+    if ((myBottom < otherTop) || (myTop > otherBottom) || (myRight < otherLeft) || (myLeft > otherRight)) {
       crash = false;
     }
     return crash;
+  };
+
+
+  // Opponent interaction
+  this.detects = function (otherobj) {
+    let myLeft = this.x;
+    let myRight = this.x + OBSTACLE_MIN_DISTANCE - OBSTACLE_WIDTH - OBSTACLE_DISTANCE_VARIETY_FACTOR;
+    let myTop = this.y - (OBSTACLE_MIN_GAP / 4);
+    let myBottom = this.y + (this.height) + (OBSTACLE_MIN_GAP / 4);
+    let otherLeft = otherobj.x;
+    let otherRight = otherobj.x + (otherobj.width);
+    let otherTop = otherobj.y;
+    let otherBottom = otherobj.y + (otherobj.height);
+    let detect = true;
+    if ((myBottom < otherTop) || (myTop > otherBottom) || (myRight < otherLeft) || (myLeft > otherRight)) {
+      detect = false;
+    }
+    return detect;
+  };
+
+  this.avoidContact = function () {
+
   }
+
+
 }
 
 // This code executes each frame
 function updateGameArea(prng) {
   let x;
+  let myOpponentDesiredPosition = CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE;
 
-  // Collision
+  this.avoidContact = function (obstacle) {
+    console.log("DODGE!");
+    if (obstacle.y === 0) {
+      myOpponentPiece.speedY = 2;
+      myOpponentPiece.speedX = -1;
+    } else {
+      myOpponentPiece.speedY = -2;
+      myOpponentPiece.speedX = -1;
+    }
+  };
+
+  this.returnToDesiredPosition = function () {
+    console.log("SAFE!");
+    myOpponentPiece.speedX = 1;
+  };
+
+  // Object avoidance
+  let aboutToCrashWith = null;
   for (i = 0; i < myObstacles.length; i += 1) {
+    // Collision between player and obstacle
     if (myPlayerPiece.crashWith(myObstacles[i])) {
+      console.log("GAME OVER!");
       myGameArea.stop();
       return;
     }
+
+    // Opponent object avoidence
+    if (myOpponentPiece.detects(myObstacles[i])) {
+      aboutToCrashWith = myObstacles[i];
+      break;
+    }
   }
+
+  if (aboutToCrashWith == null) this.returnToDesiredPosition();
+  else this.avoidContact(aboutToCrashWith);
+
 
   // Next frame
   myGameArea.clear();
@@ -182,7 +241,7 @@ function updateGameArea(prng) {
 
   // Obstacles
   if (myGameArea.frameNo === 1 || everyinterval()) {
-    x = myGameArea.canvas.width + (OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1));
+    x = myGameArea.canvas.width + (Math.floor(OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1)));
     height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT);
     gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
     myObstacles.push(new component(OBSTACLE_WIDTH, height, "green", x, 0));
@@ -212,9 +271,11 @@ function updateGameArea(prng) {
   myPlayerPiece.update();
 
   // Opponent
-  myOpponentPiece.speedY = 3;
   myOpponentPiece.newPos();
   myOpponentPiece.update();
+  myOpponentPiece.speedY = 0;
+  myOpponentPiece.speedX = 0;
+
 
   // Score
   myScore.text = "SCORE: " + myGameArea.frameNo;
