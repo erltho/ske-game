@@ -1,3 +1,4 @@
+// Declare global constants
 // Canvas
 const CANVAS_WIDTH = 800; // Default 800
 const CANVAS_HEIGHT = 600; // Default 600
@@ -25,25 +26,31 @@ const OPPONENT_HEIGHT = 30; // Default 30
 const OPPONENT_WIDTH = 30; // Default 30
 const OPPONENT_DIST_FROM_R_EDGE = 50; // Default 250
 const OPPONENT_START_Y = 0; // Default 250
+const MONEY_DROP_INTERVAL = 200; // Default 200
+const MONEY_HEIGHT = 10; // Default 10
+const MONEY_WIDTH = 10; // Default 10
 
-
+// Declare global variables
+let myMoney = [];
 let myObstacles = [];
 let myBackground;
 let myPlayerPiece;
 let myOpponentPiece;
-let myOpponentPieceHitbox;
 let myScore;
-
-
-let foo = 0;
+let score;
+let myOpponentDesiredPosition;
 
 function startGame() {
   let prng = new MersenneTwister(1337);
+  myOpponentDesiredPosition = CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE;
+  score = 0;
+  myMoney = [];
   myObstacles = [];
   myBackground = new component(CANVAS_WIDTH, CANVAS_HEIGHT, "assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
   myScore = new component("30px", "Consolas", "black", 280, 40, "text");
-  myOpponentPiece = new component( OPPONENT_WIDTH , OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y);
+  myOpponentPiece = new component(OPPONENT_WIDTH, OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent");
   myPlayerPiece = new component(PLAYER_WIDTH, PLAYER_HEIGHT, "assets/img/player/smiley.gif", PLAYER_START_X, PLAYER_START_Y, "image");
+  myOpponentDesiredPosition = CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE;
   myGameArea.start(prng);
 }
 
@@ -65,8 +72,13 @@ function updateGameAreaWithRng(prng) {
 }
 
 // Decides when a new obstacle is drawn
-function everyinterval() {
+function objectInterval() {
   return (myGameArea.frameNo / OBSTACLE_MIN_DISTANCE) % 1 === 0;
+}
+
+// Decides when oponent drops money
+function moneyInterval() {
+  return (myGameArea.frameNo / MONEY_DROP_INTERVAL) % 1 === 0;
 }
 
 // Canvas
@@ -146,55 +158,35 @@ function component(width, height, color, x, y, type) {
     }
   };
 
-  // Component crash interaction
-  this.crashWith = function (otherobj) {
+  // Component interaction
+  this.interactWith = function (otherobj) {
     let myLeft = this.x;
     let myRight = this.x + (this.width);
     let myTop = this.y;
     let myBottom = this.y + (this.height);
+    if (type === "opponent") {
+      myRight = this.x + OBSTACLE_MIN_DISTANCE - OBSTACLE_WIDTH - OBSTACLE_DISTANCE_VARIETY_FACTOR;
+      myBottom = this.y + (this.height) + (OBSTACLE_MIN_GAP / 10);
+      myTop = this.y - (OBSTACLE_MIN_GAP / 10);
+    }
     let otherLeft = otherobj.x;
     let otherRight = otherobj.x + (otherobj.width);
     let otherTop = otherobj.y;
     let otherBottom = otherobj.y + (otherobj.height);
-    let crash = false;
+    let interact = true;
     if ((myBottom < otherTop) || (myTop > otherBottom) || (myRight < otherLeft) || (myLeft > otherRight)) {
-      crash = false;
+      interact = false;
     }
-    return crash;
+    return interact;
   };
-
-
-  // Opponent interaction
-  this.detects = function (otherobj) {
-    let myLeft = this.x;
-    let myRight = this.x + OBSTACLE_MIN_DISTANCE - OBSTACLE_WIDTH - OBSTACLE_DISTANCE_VARIETY_FACTOR;
-    let myTop = this.y - (OBSTACLE_MIN_GAP / 4);
-    let myBottom = this.y + (this.height) + (OBSTACLE_MIN_GAP / 4);
-    let otherLeft = otherobj.x;
-    let otherRight = otherobj.x + (otherobj.width);
-    let otherTop = otherobj.y;
-    let otherBottom = otherobj.y + (otherobj.height);
-    let detect = true;
-    if ((myBottom < otherTop) || (myTop > otherBottom) || (myRight < otherLeft) || (myLeft > otherRight)) {
-      detect = false;
-    }
-    return detect;
-  };
-
-  this.avoidContact = function () {
-
-  }
-
-
 }
 
 // This code executes each frame
 function updateGameArea(prng) {
-  let x;
-  let myOpponentDesiredPosition = CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE;
+  let aboutToCrashWith = null;
 
+  // Avoids opponent collision with obstacles
   this.avoidContact = function (obstacle) {
-    console.log("DODGE!");
     if (obstacle.y === 0) {
       myOpponentPiece.speedY = 2;
       myOpponentPiece.speedX = -1;
@@ -204,28 +196,47 @@ function updateGameArea(prng) {
     }
   };
 
+  // Returns opponent to desired position when path is clear
   this.returnToDesiredPosition = function () {
-    console.log("SAFE!");
-    myOpponentPiece.speedX = 1;
+    myOpponentPiece.speedY = 0;
+    if (myOpponentPiece.x < myOpponentDesiredPosition)
+      myOpponentPiece.speedX = 1;
+    else myOpponentPiece.speedX = 0;
   };
 
   // Object avoidance
-  let aboutToCrashWith = null;
   for (i = 0; i < myObstacles.length; i += 1) {
     // Collision between player and obstacle
-    if (myPlayerPiece.crashWith(myObstacles[i])) {
+    if (myPlayerPiece.interactWith(myObstacles[i])) {
       console.log("GAME OVER!");
       myGameArea.stop();
       return;
     }
-
+/*
+    if (myObstacles[i].x <= -OBSTACLE_MIN_DISTANCE){
+      myObstacles.splice(i,1);
+    }
+*/
     // Opponent object avoidence
-    if (myOpponentPiece.detects(myObstacles[i])) {
+    if (myOpponentPiece.interactWith(myObstacles[i])) {
       aboutToCrashWith = myObstacles[i];
       break;
     }
   }
+  console.log(myObstacles.length);
+  // Money collection
+  for (i = 0; i < myMoney.length; i += 1) {
+    // Collision between player and money
+    if (myPlayerPiece.interactWith(myMoney[i])) {
+      console.log(myOpponentDesiredPosition);
+      score += 100;
+      myMoney.splice(i,1);
+      myOpponentDesiredPosition -= 10;
+      break;
+    }
+  }
 
+  // Controlls how the opponent moves
   if (aboutToCrashWith == null) this.returnToDesiredPosition();
   else this.avoidContact(aboutToCrashWith);
 
@@ -239,14 +250,15 @@ function updateGameArea(prng) {
   myBackground.newPos();
   myBackground.update();
 
-  // Obstacles
-  if (myGameArea.frameNo === 1 || everyinterval()) {
-    x = myGameArea.canvas.width + (Math.floor(OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1)));
-    height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT);
-    gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
+  // Spawns obstacles
+  if (myGameArea.frameNo === 1 || objectInterval()) {
+    let x = myGameArea.canvas.width + (Math.floor(OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1)));
+    let height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT);
+    let gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
     myObstacles.push(new component(OBSTACLE_WIDTH, height, "green", x, 0));
     myObstacles.push(new component(OBSTACLE_WIDTH, x - height - gap, "green", x, height + gap));
   }
+  // Moves obstacles
   for (i = 0; i < myObstacles.length; i += 1) {
     myObstacles[i].x += -1;
     myObstacles[i].update();
@@ -270,15 +282,26 @@ function updateGameArea(prng) {
   myPlayerPiece.newPos();
   myPlayerPiece.update();
 
+
+  // Draw money
+  for (i = 0; i < myMoney.length; i += 1) {
+    myMoney[i].x += -1;
+    myMoney[i].update();
+  }
+
   // Opponent
   myOpponentPiece.newPos();
   myOpponentPiece.update();
-  myOpponentPiece.speedY = 0;
-  myOpponentPiece.speedX = 0;
+
+  // Spawn money
+  if (moneyInterval()) {
+    console.log("Money dropped!");
+    myMoney.push(new component(MONEY_WIDTH, MONEY_HEIGHT, "blue", myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2)));
+  }
 
 
   // Score
-  myScore.text = "SCORE: " + myGameArea.frameNo;
+  myScore.text = "SCORE: " + score;
   myScore.update();
 }
 
