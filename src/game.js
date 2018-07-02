@@ -24,8 +24,8 @@ const PLAYER_HEIGHT = 30; // Default 30
 // Opponent
 const OPPONENT_HEIGHT = 30; // Default 30
 const OPPONENT_WIDTH = 30; // Default 30
-const OPPONENT_DIST_FROM_R_EDGE = 50; // Default 250
-const OPPONENT_START_Y = 0; // Default 250
+const OPPONENT_DIST_FROM_R_EDGE = 250; // Default 250
+const OPPONENT_START_Y = 250; // Default 250
 const MONEY_DROP_INTERVAL = 200; // Default 200
 const MONEY_HEIGHT = 10; // Default 10
 const MONEY_WIDTH = 10; // Default 10
@@ -195,7 +195,6 @@ function updateGameArea(prng) {
       myOpponentPiece.speedX = -1;
     }
   };
-
   // Returns opponent to desired position when path is clear
   this.returnToDesiredPosition = function () {
     myOpponentPiece.speedY = 0;
@@ -206,29 +205,28 @@ function updateGameArea(prng) {
 
   // Object avoidance
   for (i = 0; i < myObstacles.length; i += 1) {
+
     // Collision between player and obstacle
     if (myPlayerPiece.interactWith(myObstacles[i])) {
       console.log("GAME OVER!");
       myGameArea.stop();
       return;
     }
-/*
+    // Deletes obstacles not visible on canvas
     if (myObstacles[i].x <= -OBSTACLE_MIN_DISTANCE){
       myObstacles.splice(i,1);
     }
-*/
+
     // Opponent object avoidence
     if (myOpponentPiece.interactWith(myObstacles[i])) {
       aboutToCrashWith = myObstacles[i];
       break;
     }
   }
-  console.log(myObstacles.length);
   // Money collection
   for (i = 0; i < myMoney.length; i += 1) {
     // Collision between player and money
     if (myPlayerPiece.interactWith(myMoney[i])) {
-      console.log(myOpponentDesiredPosition);
       score += 100;
       myMoney.splice(i,1);
       myOpponentDesiredPosition -= 10;
@@ -295,7 +293,6 @@ function updateGameArea(prng) {
 
   // Spawn money
   if (moneyInterval()) {
-    console.log("Money dropped!");
     myMoney.push(new component(MONEY_WIDTH, MONEY_HEIGHT, "blue", myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2)));
   }
 
