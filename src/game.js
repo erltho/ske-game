@@ -1,3 +1,7 @@
+import MersenneTwister from 'mersenne-twister'
+import mountains from './assets/img/background/glacial_mountains_lightened.png'
+import smiley from './assets/img/player/smiley.gif'
+
 // Declare global constants
 // Canvas
 const CANVAS_WIDTH = 800; // Default 800
@@ -46,11 +50,11 @@ function startGame() {
   score = 0;
   myMoney = [];
   myObstacles = [];
-  myBackground = new Component(CANVAS_WIDTH, CANVAS_HEIGHT, "assets/img/background/glacial_mountains_lightened.png", 0, 0, "background");
+  myBackground = new Component(CANVAS_WIDTH, CANVAS_HEIGHT, mountains, 0, 0, "background");
   myScore = new Component("30px", "Consolas", "black", 280, 40, "text");
   myOpponentPiece = new Component(OPPONENT_WIDTH, OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent");
-  myPlayerPiece = new Component(PLAYER_WIDTH, PLAYER_HEIGHT, "assets/img/player/smiley.gif", PLAYER_START_X, PLAYER_START_Y, "image");
-  myOpponentDesiredPosition = CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE;
+  myPlayerPiece = new Component(PLAYER_WIDTH, PLAYER_HEIGHT, smiley, PLAYER_START_X, PLAYER_START_Y, "image");
+
   myGameArea.start(prng);
 }
 
@@ -88,15 +92,19 @@ let myGameArea = {
     this.canvas.width = CANVAS_WIDTH;
     this.canvas.height = CANVAS_HEIGHT;
     this.context = this.canvas.getContext("2d");
-    document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    const gameElement = document.getElementById("game");
+    gameElement.insertBefore(this.canvas, gameElement.childNodes[0]);
+    gameElement.tabIndex = 1;
     this.frameNo = 0;
     this.interval = setInterval(updateGameAreaWithRng(prng), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
     window.addEventListener('keydown', (e) => {
       this.keys[e.key] = (e.type === "keydown");
+      e.preventDefault();
     });
     window.addEventListener('keyup', (e) => {
       this.keys[e.key] = (e.type === "keydown");
+      e.preventDefault();
     })
   },
   clear: function () {
@@ -120,14 +128,16 @@ function Component(width, height, color, x, y, type) {
   this.speedY = 0;
   this.x = x;
   this.y = y;
+
+  // Draw different components
   this.update = function () {
-    ctx = myGameArea.context;
+    const ctx = myGameArea.context;
     if (this.type === "text") {
       ctx.font = this.width + " " + this.height;
       ctx.fillStyle = color;
       ctx.fillText(this.text, this.x, this.y);
     }
-    // Draws images and background
+    // Images and background
     else if (type === "image" || type === "background") {
       ctx.drawImage(this.image,
         this.x,
@@ -139,7 +149,11 @@ function Component(width, height, color, x, y, type) {
         ctx.drawImage(this.image,
           this.x + this.width, this.y, this.width, this.height);
       }
-    } else {
+
+    }
+
+    // Draws rectangles
+    else {
       ctx.fillStyle = color;
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
@@ -186,7 +200,7 @@ function updateGameArea(prng) {
   let aboutToCrashWith = null;
 
   // Avoids opponent collision with obstacles
-  this.avoidContact = function (obstacle) {
+  const avoidContact = function (obstacle) {
     if (obstacle.y === 0) {
       myOpponentPiece.speedY = 2;
       myOpponentPiece.speedX = -1;
@@ -196,7 +210,7 @@ function updateGameArea(prng) {
     }
   };
   // Returns opponent to desired position when path is clear
-  this.returnToDesiredPosition = function () {
+  const returnToDesiredPosition = function () {
     myOpponentPiece.speedY = 0;
     if (myOpponentPiece.x < myOpponentDesiredPosition)
       myOpponentPiece.speedX = 1;
@@ -204,7 +218,7 @@ function updateGameArea(prng) {
   };
 
   // Object avoidance
-  for (i = 0; i < myObstacles.length; i += 1) {
+  for (let i = 0; i < myObstacles.length; i += 1) {
 
     // Collision between player and obstacle
     if (myPlayerPiece.interactWith(myObstacles[i])) {
@@ -224,10 +238,10 @@ function updateGameArea(prng) {
     }
   }
   // Money collection
-  for (i = 0; i < myMoney.length; i += 1) {
+  for (let i = 0; i < myMoney.length; i += 1) {
     // Collision between player and money
     if (myPlayerPiece.interactWith(myMoney[i])) {
-      score += 100; // TODO make constants
+      score += 150;
       myMoney.splice(i, 1);
       myOpponentDesiredPosition -= 10;
       break;
@@ -235,8 +249,8 @@ function updateGameArea(prng) {
   }
 
   // Controlls how the opponent moves
-  if (aboutToCrashWith == null) this.returnToDesiredPosition();
-  else this.avoidContact(aboutToCrashWith);
+  if (aboutToCrashWith == null) returnToDesiredPosition();
+  else avoidContact(aboutToCrashWith);
 
 
   // Next frame
@@ -257,7 +271,7 @@ function updateGameArea(prng) {
     myObstacles.push(new Component(OBSTACLE_WIDTH, x - height - gap, "green", x, height + gap));
   }
   // Moves obstacles
-  for (i = 0; i < myObstacles.length; i += 1) {
+  for (let i = 0; i < myObstacles.length; i += 1) {
     myObstacles[i].x += -1;
     myObstacles[i].update();
   }
@@ -282,7 +296,7 @@ function updateGameArea(prng) {
 
 
   // Draw money
-  for (i = 0; i < myMoney.length; i += 1) {
+  for (let i = 0; i < myMoney.length; i += 1) {
     myMoney[i].x += -1;
     myMoney[i].update();
   }
@@ -300,7 +314,10 @@ function updateGameArea(prng) {
   // Score
   myScore.text = "SCORE: " + score;
   myScore.update();
+
 }
 
-
-
+export {
+  startGame,
+  restart
+}

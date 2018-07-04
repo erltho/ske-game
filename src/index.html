@@ -1,20 +1,25 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
     <style>
         canvas {
             border:1px solid #d3d3d3;
             background-color: #f1f1f1;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.js" type="application/javascript"></script>
-    <script src="libs/mersenne-twister.js" type="application/javascript"></script>
+    <title>Ske game</title>
 </head>
-<body onload="startGame()">
-<br>
-<script src="game.js" type="application/javascript"></script>
-<br>
-<button onmousedown="restart()">Restart</button>
+
+<body>
+<noscript>
+    You need to enable JavaScript to run this app.
+</noscript>
+<div id="root"></div>
+<script src="app.js" type="application/javascript"></script>
 </body>
+
 </html>
