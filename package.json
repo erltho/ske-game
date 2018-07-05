@@ -7,21 +7,28 @@
     "name": "Skatteetaten"
   },
   "files": [
-    "src",
+    "dist",
     "metadata"
   ],
   "devDependencies": {
+    "parcel-bundler": "^1.9.4",
     "prettier": "^1.11.0",
     "rimraf": "^2.6.2"
   },
   "scripts": {
-    "clean": "rimraf build coverage pom *.tgz",
+    "start": "parcel src/index.html",
+    "build": "npm run clean && parcel build src/index.html",
+    "clean": "rimraf build dist pom *.tgz",
     "lint:prettier": "prettier -l '{api,src}/**/*{.js,.jsx,.css'",
     "lint:prettier-fix": "prettier --write '{api,src}/**/*{.js,.jsx,.css}'"
   },
   "prettier": {
     "singleQuote": true
+  },
+  "dependencies": {
+    "aurora-frontend-react-komponenter": "^1.0.9",
+    "mersenne-twister": "^1.1.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
   }
 }
-
-

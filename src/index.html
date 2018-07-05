@@ -1,19 +1,25 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
     <style>
         canvas {
             border:1px solid #d3d3d3;
             background-color: #f1f1f1;
         }
     </style>
+    <title>Ske game</title>
 </head>
-<body onload="startGame()">
-<br>
-<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)">ACCELERATE</button>
-<p>Use the ACCELERATE button to stay in the air</p>
-<p>How long can you stay alive?</p>
-<script src="game.js" type="application/javascript"></script>
+
+<body>
+<noscript>
+    You need to enable JavaScript to run this app.
+</noscript>
+<div id="root"></div>
+<script src="app.js" type="application/javascript"></script>
 </body>
+
 </html>
