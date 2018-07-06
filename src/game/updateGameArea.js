@@ -22,6 +22,7 @@ const MONEY_WIDTH = 10; // Default 10
 
 // This code executes each frame
 function updateGameArea(myGameArea, gameElements, prng) {
+
   let {
     myOpponentDesiredPosition,
     score,
@@ -88,7 +89,6 @@ function updateGameArea(myGameArea, gameElements, prng) {
   if (aboutToCrashWith == null) returnToDesiredPosition();
   else avoidContact(aboutToCrashWith);
 
-
   // Next frame
   myGameArea.clear();
   myGameArea.frameNo += 1;
@@ -112,7 +112,20 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myObstacles[i].update(myGameArea);
   }
 
+
   // Player
+  // Gamepad integration
+  if (myGameArea.gamepadConnected === true) {
+    // Gamepad støtte om den er koblet til
+    let gamepad = navigator.getGamepads()[0];
+    let axis1 = gamepad.axes[0];
+    let axis2 = gamepad.axes[1];
+    myGameArea.keys["ArrowLeft"] = axis1 === -1;
+    myGameArea.keys["ArrowRight"] = axis1 === 1;
+    myGameArea.keys["ArrowUp"] = axis2 === -1;
+    myGameArea.keys["ArrowDown"] = axis2 === 1;
+  }
+  // Movement
   myPlayerPiece.speedX = 0;
   myPlayerPiece.speedY = 0;
   if (myGameArea.keys["ArrowLeft"] && myPlayerPiece.x >= PLAYER_SPEED) {

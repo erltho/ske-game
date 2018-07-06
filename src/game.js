@@ -15,6 +15,7 @@ const PLAYER_START_X = 10; // Default 10
 const PLAYER_START_Y = 120; // Default 120
 const PLAYER_WIDTH = 30; // Default 30
 const PLAYER_HEIGHT = 30; // Default 30
+const PLAYER_MOVEMENT_AREA = 140; // Default 140
 
 // Opponent
 const OPPONENT_HEIGHT = 30; // Default 30
@@ -52,6 +53,7 @@ console.log("Game started!");
 function restart() {
   myGameArea.stop();
   myGameArea.clear();
+  myGameArea.keys = [];
   startGame();
 }
 
@@ -68,17 +70,27 @@ let myGameArea = {
     this.frameNo = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
+    this.gamepadConnected = (this.gamepadConnected || false);
     window.addEventListener('keydown', (e) => {
-      console.log((e.key));
       if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
         e.preventDefault();
       }
       this.keys[e.key] = (e.type === "keydown");
     });
+    window.addEventListener('gamepadconnected', (e) => {
+
+      this.gamepadConnected = e.gamepad.connected;
+
+      console.log(e.gamepad.connected);
+      console.log(e);
+      window.connectedEvent = e;
+    });
+
     window.addEventListener('keyup', (e) => {
+
       this.keys[e.key] = (e.type === "keydown");
       //e.preventDefault();
-    })
+    });
   },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
