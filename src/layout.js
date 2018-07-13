@@ -3,13 +3,13 @@ import TopBanner from 'aurora-frontend-react-komponenter/TopBanner';
 import FooterContent from 'aurora-frontend-react-komponenter/FooterContent';
 import Grid from 'aurora-frontend-react-komponenter/Grid';
 
-const Layout = ({children}) => (
+const GameLayout = ({children}) => (
   <div>
     <TopBanner
       external
       compact
       homeText="Til skatteetaten.no"
-      title="Ske game"
+      title="Skattepumpa"
     />
     {children}
     <FooterContent>
@@ -19,7 +19,7 @@ const Layout = ({children}) => (
             <FooterContent.Logo />
           </Grid.Col>
           <Grid.Col sm={12} lg={12} xl={3}>
-            Annet innhold
+            All rights reserved
           </Grid.Col>
         </Grid.Row>
       </Grid>
@@ -27,4 +27,5 @@ const Layout = ({children}) => (
   </div>
 );
 
-export default Layout
+export default GameLayout;
+

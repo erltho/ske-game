@@ -88,6 +88,7 @@ let myGameArea = {
 
     window.addEventListener('keyup', (e) => {
 
+      console.log("click");
       this.keys[e.key] = (e.type === "keydown");
       //e.preventDefault();
     });
