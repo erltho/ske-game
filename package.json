@@ -27,8 +27,10 @@
   },
   "dependencies": {
     "aurora-frontend-react-komponenter": "^1.0.9",
+    "jquery": "^3.3.1",
     "mersenne-twister": "^1.1.0",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "underscore": "^1.9.1"
   }
 }
