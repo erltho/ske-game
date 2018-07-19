@@ -105,21 +105,15 @@ function restart() {
 }
 
 // Canvas
+
+/*
+if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " ") {
+  e.preventDefault();
+}
+this.keys[e.key] = (this.type === "keydown");
+*/
+
 let myGameArea = {
-  debounce: function(func, wait, immediate) {
-  let timeout;
-  return function() {
-    let context = this, args = arguments;
-    let later = function() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    let callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-},
   canvas: document.createElement("canvas"),
   start: function (gameElements, prng, gameType, firstGameStart) {
     this.canvas.width = CANVAS_WIDTH;
@@ -133,15 +127,14 @@ let myGameArea = {
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
     this.gamepadConnected = (this.gamepadConnected || false);
-    const myEfficientFn = this.debounce(function() {
-      if (this.key === "ArrowUp" || this.key === "ArrowDown" || this.key === "ArrowLeft" || this.key === "ArrowRight" || this.key === " ") {
-        this.preventDefault();
-      }
-      this.keys[this.key] = (this.type === "keydown");
-    }, 250);
 
     if (firstGameStart === true) {
-      window.addEventListener('keydown', myEfficientFn);
+      window.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+        }
+        this.keys[e.key] = (e.type === "keydown");
+        });
       window.addEventListener('keyup', (e) => {
         this.keys[e.key] = (e.type === "keydown");
       });
@@ -160,6 +153,7 @@ let myGameArea = {
     clearInterval(this.interval);
   }
 };
+
 
 export {
   startGame,
