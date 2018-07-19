@@ -1,6 +1,9 @@
-import Underscore from 'underscore';
+import _ from 'underscore';
+import jQuery from "jquery";
 
 
+
+window.$ = window.jQuery = jQuery;
 
 function loadMainMenu() {
   localStorage.setItem("BrukersNavn", "");
@@ -90,7 +93,6 @@ var subButton = document.getElementById('subButton');
 
 function plotHigh() {
   var scores = JSON.parse(localStorage.scoreBoard);
-
   var scores =  _.sortBy(scores, function (o) {
     return parseInt(o.totalScore);
   }).reverse();
@@ -129,5 +131,8 @@ function plotHigh() {
   }
 }
 
+export {
+  loadMainMenu,
+  inputValidator
+}
 
-export default loadMainMenu;

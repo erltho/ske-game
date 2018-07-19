@@ -78,7 +78,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
   for (let i = 0; i < myMoney.length; i += 1) {
     // Collision between player and money
     if (myPlayerPiece.interactWith(myMoney[i])) {
-      score.update(150);
+      score.update(123214);
       myMoney.splice(i, 1);
       myOpponentDesiredPosition -= 10;
       break;
@@ -164,6 +164,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
   myScore.update(myGameArea);
 }
 
+
 // Decides when a new obstacle is drawn
 function objectInterval(myGameArea) {
   return (myGameArea.frameNo / OBSTACLE_MIN_DISTANCE) % 1 === 0;
@@ -176,10 +177,59 @@ function moneyInterval(myGameArea) {
 
 
 // Give each frame access to prng
-function updateGameAreaWithRng(myGameArea, gameElements, prng) {
-  return function () {
-    updateGameArea(myGameArea, gameElements, prng)
+function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
+  console.log(gameType);
+  if (gameType === 1) {
+    return function () {
+      updateGameArea(myGameArea, gameElements, prng)
+    }
+  } else if (gameType === 2) {
+    return function () {
+      alertFunction(myGameArea, gameElements)
+    }
   }
+}
+
+function alertFunction(myGameArea, gameElements) {
+
+
+  let {
+    gameOneGubbeSprite,
+    gameOneBackground,
+    gameOneTextBubble,
+    gameOneButtonText,
+    gameOneScoreBackground,
+    gameOneScoreText,
+    score
+  } = gameElements;
+
+
+  myGameArea.clear();
+
+
+
+  // Gamepad integration
+  if (myGameArea.gamepadConnected === true) {
+    // Gamepad støtte om den er koblet til
+    let gamepad = navigator.getGamepads()[0];
+    let button1 = gamepad.buttons[0];
+    myGameArea.keys["ArrowUp"] = button1.value === 1;
+  }
+
+  if (myGameArea.keys["ArrowUp"]){
+
+    score.update(666);
+  }
+
+  // Gubbe test
+  gameOneBackground.update(myGameArea);
+  gameOneGubbeSprite.update(myGameArea);
+  gameOneTextBubble.update(myGameArea);
+  gameOneButtonText.text = "Trykk på knappen så fort du klarer!";
+  gameOneButtonText.update(myGameArea);
+  gameOneScoreBackground.update(myGameArea);
+  gameOneScoreText.text = score.get() + ",- Kr";
+  gameOneScoreText.update(myGameArea);
 }
 
 export {

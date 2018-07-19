@@ -7,9 +7,9 @@ const OBSTACLE_MIN_DISTANCE = 140; // Default 140
 const OBSTACLE_DISTANCE_VARIETY_FACTOR = 30; // Default 30
 
 // Game-pieces
-function Component(width, height, color, x, y, type) {
+function Component(width, height, color, x, y, type, options) {
   this.type = type;
-  if (type === "image" || type === "background") {
+  if (type === "image" || type === "background" || type === "sprite") {
     this.image = new Image();
     this.image.src = color;
   }
@@ -20,12 +20,14 @@ function Component(width, height, color, x, y, type) {
   this.x = x;
   this.y = y;
 
+
   // Draw different components
   this.update = function (myGameArea) {
     const ctx = myGameArea.context;
     if (this.type === "text") {
-      ctx.font = this.width + " " + this.height;
+      ctx.font = this.width + "px " + this.height;
       ctx.fillStyle = color;
+      ctx.textAlign = options.textAlign;
       ctx.fillText(this.text, this.x, this.y);
     }
     // Images and background
@@ -41,12 +43,50 @@ function Component(width, height, color, x, y, type) {
           this.x + this.width, this.y, this.width, this.height);
       }
 
+    } else if (type === "sprite") {
+      this.numberOfFrames = options.numberOfFrames;
+
+      ctx.drawImage(
+        this.image,
+        this.width * 3 / this.numberOfFrames, // tallet mellom 0 - 3 bestemmer hvilken animasjon som skal vises
+        0,
+        this.width / this.numberOfFrames,
+        this.height,
+        this.x,
+        this.y,
+        this.width / this.numberOfFrames,
+        this.height);
+    } else if (type === "button"){
+      this.radius = options.radius;
+
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(this.x + this.width, this.y);
+      ctx.arc(this.x + this.width + this.radius, this.y + this.radius, this.radius, 1.5*Math.PI , 0 * Math.PI, false);
+      ctx.lineTo(this.x + this.width + (this.radius * 2),this.y + this.height + this.radius);
+      ctx.arc(this.x + this.width + this.radius,this.y + this.height + this.radius, this.radius, 0*Math.PI, 0.5 *Math.PI,false);
+      ctx.lineTo(this.x + 300 ,this.y + this.height + (this.radius * 2)); // utstikker til snakkeboble
+      ctx.lineTo(this.x + 240 ,this.y + this.height + (this.radius * 2) + 50); // utstikker til snakkeboble
+      ctx.lineTo(this.x + 275,this.y + this.height + (this.radius * 2)); // utstikker til snakkeboble
+      ctx.lineTo(this.x ,this.y + this.height + (this.radius * 2));
+      ctx.arc(this.x,this.y + this.height + this.radius, this.radius , 0.5*Math.PI, 1 *Math.PI,false);
+      ctx.lineTo(this.x - this.radius, this.y + this.radius);
+      ctx.arc(this.x ,this.y + this.radius, this.radius, 1*Math.PI, 1.5 *Math.PI,false);
+      ctx.fillStyle = color;
+      ctx.fill();
     }
 
     // Draws rectangles
     else {
+      ctx.globalAlpha = 1;
+      if (typeof options !== "undefined") {
+         if (typeof options.transparency !== "undefined") {
+           ctx.globalAlpha = options.transparency;
+         }
+      }
       ctx.fillStyle = color;
       ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.globalAlpha = 1;
     }
   };
 

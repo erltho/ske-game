@@ -26,6 +26,7 @@
     "singleQuote": true
   },
   "dependencies": {
+    "animatesprite": "^0.2.1",
     "aurora-frontend-react-komponenter": "^1.0.9",
     "jquery": "^3.3.1",
     "mersenne-twister": "^1.1.0",
