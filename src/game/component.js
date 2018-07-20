@@ -12,11 +12,18 @@ function Component(width, height, color, x, y, type, options) {
   if (type === "image" || type === "background" || type === "sprite") {
     this.image = new Image();
     this.image.src = color;
+  } else {
+    this.color = color;
+  }
+  if (type === "sprite") {
+    this.frame = 3;
   }
   this.width = width;
   this.height = height;
   this.speedX = 0;
   this.speedY = 0;
+  this.growthW = 0;
+  this.growthH =0;
   this.x = x;
   this.y = y;
 
@@ -26,7 +33,7 @@ function Component(width, height, color, x, y, type, options) {
     const ctx = myGameArea.context;
     if (this.type === "text") {
       ctx.font = this.width + "px " + this.height;
-      ctx.fillStyle = color;
+      ctx.fillStyle = this.color;
       ctx.textAlign = options.textAlign;
       ctx.fillText(this.text, this.x, this.y);
     }
@@ -48,7 +55,7 @@ function Component(width, height, color, x, y, type, options) {
 
       ctx.drawImage(
         this.image,
-        this.width * 3 / this.numberOfFrames, // tallet mellom 0 - 3 bestemmer hvilken animasjon som skal vises
+        this.width * this.frame / this.numberOfFrames, // tallet mellom 0 - 3 bestemmer hvilken animasjon som skal vises
         0,
         this.width / this.numberOfFrames,
         this.height,
@@ -94,6 +101,8 @@ function Component(width, height, color, x, y, type, options) {
   this.newPos = function () {
     this.x += this.speedX;
     this.y += this.speedY;
+    this.width += this.growthW;
+    this.height += this.growthH;
 
     // Redraws the background when it has looped through
     if (this.type === "background") {

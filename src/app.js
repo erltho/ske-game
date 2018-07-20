@@ -5,7 +5,6 @@ import SkeBasis from 'aurora-frontend-react-komponenter/SkeBasis';
 import Button from 'aurora-frontend-react-komponenter/Button';
 import MenuLayout from './layout'
 import {loadMainMenu, inputValidator }from './mainMenu'
-import startButtonMash from './buttonMash'
 
 import './index.css'
 

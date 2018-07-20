@@ -2,6 +2,9 @@ import MersenneTwister from 'mersenne-twister'
 import mountains from './assets/img/background/glacial_mountains_lightened.png'
 import smiley from './assets/img/player/smiley.gif'
 import gubbeSpriteSheet from './assets/img/2017/GubbeAnimSpriteSheet.png';
+import hourglass from './assets/img/other/Hourglass.png';
+import kunst from './assets/img/other/Kunst.png';
+import face from './assets/img/other/Face.png';
 import {updateGameAreaWithRng} from './game/updateGameArea'
 import Component from './game/component';
 
@@ -50,9 +53,14 @@ function createDefaultGameElements() {
     gameOneGubbeSprite: new Component(GUBBE_SPRITE_WIDTH, GUBBE_SPRITE_HEIGHT, gubbeSpriteSheet, 0, CANVAS_HEIGHT - GUBBE_SPRITE_HEIGHT, "sprite", {numberOfFrames: 4}),
     gameOneBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0,0),
     gameOneTextBubble: new Component(CANVAS_WIDTH - (BUTTON_DIST_FROM_Y_EDGE * 2) - BUTTON_RADIUS, BUTTON_HEIGHT, BUTTON_COLOR, BUTTON_DIST_FROM_Y_EDGE, BUTTON_DIST_FROM_X_EDGE, "button", {radius: BUTTON_RADIUS}),
-    gameOneButtonText: new Component(40, "Georgia", "black", CANVAS_WIDTH / 2 , 82, "text", {textAlign: "center"}),
+    gameOneButtonText: new Component(35, "Georgia", "black", CANVAS_WIDTH / 2 , 82, "text", {textAlign: "center"}),
     gameOneScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
-    gameOneScoreText: new Component(60, "Georgia", "white", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
+    gameOneScoreText: new Component(60, "Georgia", "#f4f4f4", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
+    gameOneCountDownTimer: new Component(30, "Georgia", "black", 650, 350, "text", {textAlign: "left"}),
+    gameOneHourglass: new Component(80, 80, hourglass, 600, 300, "image"),
+    gameOneFace: new Component(55, 55, face, 207, 310, "image"),
+    gameOneEasterEgg: new Component(10, 30, kunst, 207, 420, "image"),
+
 
 
     // Game 3
@@ -124,17 +132,25 @@ let myGameArea = {
     gameElement.insertBefore(this.canvas, gameElement.childNodes[0]);
     gameElement.tabIndex = 1;
     this.frameNo = 0;
+    this.firstClick = true;
+    this.readyToFire = true;
+    this.countDownTimer = 10;
+    this.clickCounter = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
     this.gamepadConnected = (this.gamepadConnected || false);
+    console.log("myGameArea Started!");
 
     if (firstGameStart === true) {
+
       window.addEventListener('keydown', (e) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " ") {
           e.preventDefault();
         }
-        this.keys[e.key] = (e.type === "keydown");
-        });
+          this.keys[e.key] = (e.type === "keydown");
+      });
+
+
       window.addEventListener('keyup', (e) => {
         this.keys[e.key] = (e.type === "keydown");
       });

@@ -185,12 +185,14 @@ function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
     }
   } else if (gameType === 2) {
     return function () {
-      alertFunction(myGameArea, gameElements)
+      gameOne(myGameArea, gameElements)
     }
   }
 }
 
-function alertFunction(myGameArea, gameElements) {
+
+// GameOne
+function gameOne(myGameArea, gameElements) {
 
 
   let {
@@ -200,12 +202,16 @@ function alertFunction(myGameArea, gameElements) {
     gameOneButtonText,
     gameOneScoreBackground,
     gameOneScoreText,
+    gameOneHourglass,
+    gameOneCountDownTimer,
+    gameOneFace,
+    gameOneEasterEgg,
     score
   } = gameElements;
 
+  let countDownTimer = Math.abs((myGameArea.countDownTimer - myGameArea.frameNo * 0.015).toFixed(2));
 
   myGameArea.clear();
-
 
 
   // Gamepad integration
@@ -216,21 +222,121 @@ function alertFunction(myGameArea, gameElements) {
     myGameArea.keys["ArrowUp"] = button1.value === 1;
   }
 
-  if (myGameArea.keys["ArrowUp"]){
+  gameOneCountDownTimer.growthW = 0;
+  gameOneHourglass.growthH = 0;
+  gameOneHourglass.growthW = 0;
+  gameOneHourglass.speedX = 0;
+  gameOneHourglass.speedY = 0;
 
-    score.update(666);
+
+  if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
+    score.update(123214);
+    gameOneGubbeSprite.frame = Math.floor(Math.random() * 2.99);
+    myGameArea.clickCounter += 1;
+    myGameArea.readyToFire = false;
+    myGameArea.firstClick = false;
+    console.log(myGameArea.clickCounter);
   }
 
-  // Gubbe test
+  if (!myGameArea.keys["ArrowUp"]) {
+    myGameArea.readyToFire = true;
+  }
+
+  if (myGameArea.frameNo % 10 === 0 && myGameArea.firstClick === false) {
+    gameOneHourglass.speedX = -0.7;
+    gameOneHourglass.speedY = -0.7;
+    gameOneHourglass.growthH = 1;
+    gameOneHourglass.growthW = 1;
+    gameOneCountDownTimer.growthW = 1;
+  }
+
+  if (countDownTimer <= 3.00) {
+    gameOneCountDownTimer.color = "red";
+  }
+
+
+  // textboble
+  if (countDownTimer > 0) {
+    switch (myGameArea.clickCounter) {
+      case 0:
+        gameOneButtonText.text = "Trykk på knappen for å samle inn penger!";
+        break;
+      case 1:
+        gameOneButtonText.text = "Da er vi i gang";
+        break;
+      case 25:
+        gameOneButtonText.text = "Smerte er midlertidig, ære varer evig";
+        break;
+      case 50:
+        gameOneButtonText.text = "Sinnet bestemmer hva som er mulig";
+        break;
+      case 75:
+        gameOneButtonText.text = "Dette kan bli rekord!";
+        break;
+      case 100:
+        gameOneButtonText.text = "Jukser du?";
+        break;
+      case 125:
+        gameOneButtonText.text = "Tipper du er populær blandt damene";
+        gameOneEasterEgg.speedY = 1;
+        break;
+    }
+  } else {
+    gameOneGubbeSprite.frame = 3;
+    gameOneButtonText.text = "Du klarte " + myGameArea.clickCounter + " trykk på 10 sekunder";
+  }
+
+
+  if (gameOneEasterEgg.y > 600){
+    gameOneEasterEgg.speedY = 0;
+  }
+
+
+
+  gameOneEasterEgg.newPos();
+
   gameOneBackground.update(myGameArea);
+  gameOneEasterEgg.update(myGameArea);
   gameOneGubbeSprite.update(myGameArea);
   gameOneTextBubble.update(myGameArea);
-  gameOneButtonText.text = "Trykk på knappen så fort du klarer!";
   gameOneButtonText.update(myGameArea);
   gameOneScoreBackground.update(myGameArea);
   gameOneScoreText.text = score.get() + ",- Kr";
   gameOneScoreText.update(myGameArea);
+
+
+  if (myGameArea.frameNo % 15 === 0) {
+    if (gameOneGubbeSprite.frame < 3) {
+      gameOneGubbeSprite.frame += 1;
+    }
+  }
+
+
+  if (myGameArea.firstClick === false) {
+    myGameArea.frameNo += 1;
+    if (countDownTimer <= 0) {
+      myGameArea.stop();
+    } else {
+      gameOneCountDownTimer.newPos();
+      gameOneCountDownTimer.text = countDownTimer + "";
+      gameOneCountDownTimer.update(myGameArea);
+
+      gameOneHourglass.newPos();
+      gameOneHourglass.update(myGameArea);
+
+      if (myGameArea.clickCounter >= 25) {
+        gameOneFace.update(myGameArea);
+      }
+    }
+  } else {
+    gameOneCountDownTimer.text = (10).toFixed(2) + "";
+    gameOneCountDownTimer.update(myGameArea);
+    gameOneHourglass.update(myGameArea);
+  }
+
+
 }
+
 
 export {
   updateGameArea,
