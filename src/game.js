@@ -3,7 +3,7 @@ import mountains from './assets/img/background/glacial_mountains_lightened.png'
 import smiley from './assets/img/player/smiley.gif'
 import gubbeSpriteSheet from './assets/img/2017/GubbeAnimSpriteSheet.png';
 import hourglass from './assets/img/other/Hourglass.png';
-import kunst from './assets/img/other/Kunst.png';
+import rock from './assets/img/other/Rock.png';
 import face from './assets/img/other/Face.png';
 import {updateGameAreaWithRng} from './game/updateGameArea'
 import Component from './game/component';
@@ -40,6 +40,9 @@ const OPPONENT_WIDTH = 30; // Default 30
 const OPPONENT_DIST_FROM_R_EDGE = 0; // Default 250
 const OPPONENT_START_Y = 250; // Default 250
 
+let gameType;
+gameType = 0;
+
 function Score() {
   this.score = 0;
   this.update = (s) => this.score += s;
@@ -59,8 +62,9 @@ function createDefaultGameElements() {
     gameOneCountDownTimer: new Component(30, "Georgia", "black", 650, 350, "text", {textAlign: "left"}),
     gameOneHourglass: new Component(80, 80, hourglass, 600, 300, "image"),
     gameOneFace: new Component(55, 55, face, 207, 310, "image"),
-    gameOneEasterEgg: new Component(10, 30, kunst, 207, 420, "image"),
+    gameOneEasterEgg: new Component(10, 30, rock, 207, 420, "image"),
 
+    // Game 2
 
 
     // Game 3
@@ -77,16 +81,38 @@ function createDefaultGameElements() {
 
 function startGame() {
   // Replace ske-layout__body with canvas
+
+
   let element = document.getElementById("ske-layout__body");
   let firstGameStart = true;
+  gameType += 1;
+
+
+
   if (typeof(element) !== 'undefined' && element !== null)
   {
+
+    let user = document.getElementById("nameField").value;
+    localStorage.setItem("BrukersNavn", user) ;
+    let tlfNumber = document.getElementById("numberField").value;
+    localStorage.setItem("BrukersNummer", tlfNumber) ;
+
     element.parentNode.removeChild(element);
   }
 
   let canvas = document.getElementById("gameCanvas");
   if (typeof(canvas) !== 'undefined' && canvas !== null)
   {
+
+    let name = localStorage.getItem("BrukersNavn");
+    let number = localStorage.getItem("BrukersNummer");
+
+
+    let scoreArray = JSON.parse(localStorage.scoreBoard);
+    let objPush = {"navn": name, "nummer": number};
+    scoreArray.push(objPush);
+    localStorage.scoreBoard = JSON.stringify(scoreArray);
+
     canvas.parentNode.removeChild(canvas);
     myGameArea.stop();
     myGameArea.clear();
@@ -97,12 +123,11 @@ function startGame() {
 
 
   // start game
-  let gameType = 2;
   let prng = new MersenneTwister(1337);
   myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
+  console.log("Game started!");
 }
 
-console.log("Game started!");
 
 // Restart game
 function restart() {
@@ -113,17 +138,10 @@ function restart() {
 }
 
 // Canvas
-
-/*
-if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " ") {
-  e.preventDefault();
-}
-this.keys[e.key] = (this.type === "keydown");
-*/
-
 let myGameArea = {
   canvas: document.createElement("canvas"),
   start: function (gameElements, prng, gameType, firstGameStart) {
+    document.getElementById("myBtn").disabled = true;
     this.canvas.width = CANVAS_WIDTH;
     this.canvas.height = CANVAS_HEIGHT;
     this.canvas.id = "gameCanvas";
@@ -134,7 +152,7 @@ let myGameArea = {
     this.frameNo = 0;
     this.firstClick = true;
     this.readyToFire = true;
-    this.countDownTimer = 10;
+    this.countDownTimer = 1;
     this.clickCounter = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
@@ -166,6 +184,7 @@ let myGameArea = {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
   stop: function () {
+    document.getElementById("myBtn").disabled = false;
     clearInterval(this.interval);
   }
 };

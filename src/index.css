@@ -11,6 +11,9 @@ html, body {
     margin: 50px auto;
 }
 
+*[disabled] {
+    pointer-events: none !important;
+}
 
 /*Legacy CSS */
 
@@ -117,11 +120,8 @@ input[type="text"] {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    -webkit-border-radius: none;
-    -moz-border-radius: none;
     -ms-border-radius: none;
     -o-border-radius: none;
-    border-radius: none;
 }
 input[type="text"]:focus {
     outline: none;

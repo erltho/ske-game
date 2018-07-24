@@ -179,11 +179,11 @@ function moneyInterval(myGameArea) {
 // Give each frame access to prng
 function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
   console.log(gameType);
-  if (gameType === 1) {
+  if (gameType === 2) {
     return function () {
       updateGameArea(myGameArea, gameElements, prng)
     }
-  } else if (gameType === 2) {
+  } else if (gameType === 1) {
     return function () {
       gameOne(myGameArea, gameElements)
     }
@@ -259,10 +259,10 @@ function gameOne(myGameArea, gameElements) {
   if (countDownTimer > 0) {
     switch (myGameArea.clickCounter) {
       case 0:
-        gameOneButtonText.text = "Trykk på knappen for å samle inn penger!";
+        gameOneButtonText.text = "Trykk på knappen for å starte spillet";
         break;
       case 1:
-        gameOneButtonText.text = "Da er vi i gang";
+        gameOneButtonText.text = "Fortsett å trykke!";
         break;
       case 25:
         gameOneButtonText.text = "Smerte er midlertidig, ære varer evig";
@@ -277,7 +277,7 @@ function gameOne(myGameArea, gameElements) {
         gameOneButtonText.text = "Jukser du?";
         break;
       case 125:
-        gameOneButtonText.text = "Tipper du er populær blandt damene";
+        gameOneButtonText.text = "MAXIMUM POWER";
         gameOneEasterEgg.speedY = 1;
         break;
     }
@@ -315,6 +315,7 @@ function gameOne(myGameArea, gameElements) {
   if (myGameArea.firstClick === false) {
     myGameArea.frameNo += 1;
     if (countDownTimer <= 0) {
+      localStorage.setItem("buttonMashScore", score.get()) ;
       myGameArea.stop();
     } else {
       gameOneCountDownTimer.newPos();
