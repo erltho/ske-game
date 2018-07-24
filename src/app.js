@@ -3,24 +3,29 @@ import ReactDOM from 'react-dom'
 import {startGame, restart} from './game'
 import SkeBasis from 'aurora-frontend-react-komponenter/SkeBasis';
 import Button from 'aurora-frontend-react-komponenter/Button';
-import GameLayout from './layout'
+import MenuLayout from './layout'
+import {loadMainMenu, inputValidator} from './mainMenu'
 
 import './index.css'
 
-
-class Game extends React.Component {
+class MainMenu extends React.Component {
 
 
   componentDidMount() {
-    startGame()
+    loadMainMenu();
+
+    console.log("componentDidMount");
   }
 
   render() {
+    console.log("render");
+
     return (
-      <GameLayout>
+      <MenuLayout>
         <div id="game"/>
-        <Button buttonType="primary" onClick={restart}>Start Game</Button>
-      </GameLayout>
+        <Button id="myBtn" buttonType="primary" onClick={startGame}>Neste</Button>
+
+      </MenuLayout>
     )
   }
 
@@ -29,6 +34,7 @@ class Game extends React.Component {
 
 ReactDOM.render(
   <SkeBasis>
-  <Game />
+    <MainMenu/>
   </SkeBasis>
   , document.getElementById('root'));
+

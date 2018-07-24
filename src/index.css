@@ -10,3 +10,261 @@ html, body {
     display: block;
     margin: 50px auto;
 }
+
+*[disabled] {
+    pointer-events: none !important;
+}
+
+/*Legacy CSS */
+
+.contentWrapper {
+    position: relative;
+    top: 50%;
+    height: auto;
+    width: 1000px;
+    margin: 50px auto;
+    padding: 0;
+}
+
+.imgCenter {
+    display: block;
+    margin: 0 auto;
+}
+
+.scoreList{
+    width: 350px;
+    margin:0 auto;
+    padding: 0;
+    border: 1px solid black;
+}
+
+.randomPanel {
+    width: 600px;
+    height: 400px;
+    background-color: lightgrey;
+    overflow: hidden;
+    margin: 20px;
+    float: left;
+}
+.adminScoreList{
+    margin: 20px;
+    width: 400px;
+    padding: 0;
+    border: 1px solid black;
+    float: left;
+}
+
+.inputListAdmin{
+    width: 338px;
+    padding-top: 10px;
+}
+.inputList{
+    width: 320px;
+    margin-left: 323px;
+    padding-top: 10px;
+    float: left;
+}
+#nrError{
+    padding-top: 12px;
+}
+.errorMsg{
+    width: 300px;
+    height: 64px;
+    margin-right: 20px;
+    margin-top: 25px;
+    float: right;
+}
+
+
+.errorMsgBlock {
+    height: 32px;
+    width: 100%;
+}
+
+.myRow{
+    padding: 2px;
+    padding-left: 10px;
+    display: flex;
+    justify-content: flex-start;
+}
+.colHeader{
+    text-align: center;
+    font-weight: 400;
+}
+.col{
+    flex-basis: 30%;
+}
+.colHS0, .colMS0, .colAS0{
+    flex-basis: 10%;
+    text-align: center;
+}
+.colHS1, .colMS1, .colAS1{
+    flex-basis: 55%;
+    padding-left: 16px;
+}
+.colHS2, .colMS2, .colAS2{
+    flex-basis: 30%;
+    text-align: right;
+}
+.colAS3 {
+    flex-basis: 40%;
+    text-align: right;
+}
+input[type="text"] {
+    margin-top: 8px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 18px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -ms-border-radius: none;
+    -o-border-radius: none;
+}
+input[type="text"]:focus {
+    outline: none;
+}
+
+/* lists */
+ul.input-list {
+    list-style: none;
+    margin: 0 -10px;
+    padding: 0;
+}
+ul.input-list li {
+    padding: 0 10px;
+    width: 100%;
+}
+
+.style-2 input[type="text"] {
+
+    width: 100%;
+    padding: 5px;
+    border: solid 2px #c9c9c9;
+    -webkit-transition: border 0.3s;
+    -moz-transition: border 0.3s;
+    -o-transition: border 0.3s;
+    transition: border 0.3s;
+}
+.style-2 input[type="text"]:focus, .style-2 input[type="text"].focus {
+    border: solid 2px #969696;
+}
+
+.gubbeAnim {
+    height: 333px;
+    width: 459px;
+    background-image: url(assets/img/2017/GubbeAnimSpriteSheet.png);
+}
+
+.kassaAnim {
+    height: 352px;
+    width: 162px;
+    background-image: url(./assets/img/2017/kassaAnim.png);
+    margin:0 auto;
+    margin-top: 30px;
+}
+
+.content {
+    height: 580px;
+    width: 1000px;
+    padding: 20px;
+}
+
+.buttonDiv {
+    margin-top: 0px;
+    width: 1000px;
+    height: 50px;
+    position: relative;
+}
+
+.colorHoved{
+    background-color: #CDB7BA;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+}
+
+.colorMash{
+    background-color: #F9B1B5;
+    background-color: #D2EDDA;
+    background-color: #CDB7BA;
+}
+
+.colorReact{
+    background-color: #D2EDDA;
+    background-color: #CDB7BA;
+}
+
+.colorScore {
+    background-color: #E1D1D1;
+    background-color: #CDB7BA;
+}
+
+.x_panel {
+    position: relative;
+    width: 170px;
+    margin-bottom: 10px;
+    padding: 10px 17px;
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #E6E9ED;
+    -webkit-column-break-inside: avoid;
+    -moz-column-break-inside: avoid;
+    column-break-inside: avoid;
+    opacity: 1;
+    transition: all .2s ease; }
+
+.buttonLeft {
+    float: right;
+    right: 17px;
+}
+
+.simpleText {
+    text-align: center;
+    vertical-align: middle;
+    margin-top: 0px;
+    margin-bottom: 6px;
+}
+.totalScoreText {
+    text-align: center;
+    vertical-align: middle;
+    margin-top: 36px;
+    margin-bottom: 36px;
+}
+
+#button_presses {
+    margin-bottom: 14px;
+}
+
+.chart_div {
+    text-align: center;
+    margin-bottom: 17px;
+}
+
+.form-sub {
+    padding-top: 12px;
+}
+
+.table .td .th {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.th {
+    height: 50px;
+}
+
+.visibility {
+    visibility: hidden;
+}
+
+.visibility1 {
+    visibility: visible;
+}
