@@ -51,7 +51,7 @@ const MenuLayout = ({children}) => (
             <FooterContent.Logo/>
           </Grid.Col>
           <Grid.Col sm={12} lg={12} xl={3}>
-            All rights reserved
+            All rights reversed
           </Grid.Col>
         </Grid.Row>
       </Grid>

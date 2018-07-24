@@ -2,6 +2,8 @@ import MersenneTwister from 'mersenne-twister'
 import mountains from './assets/img/background/glacial_mountains_lightened.png'
 import smiley from './assets/img/player/smiley.gif'
 import gubbeSpriteSheet from './assets/img/2017/GubbeAnimSpriteSheet.png';
+import kassaReactionSheet from './assets/img/other/kassaAnimNy.png';
+import gubbeReactionSheet from './assets/img/other/GubbeReactionSpriteSheet.png';
 import hourglass from './assets/img/other/Hourglass.png';
 import rock from './assets/img/other/Rock.png';
 import face from './assets/img/other/Face.png';
@@ -65,7 +67,11 @@ function createDefaultGameElements() {
     gameOneEasterEgg: new Component(10, 30, rock, 207, 420, "image"),
 
     // Game 2
-
+    gameTwoBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0,0),
+    gameTwoGubbeSprite: new Component(916, 333, gubbeReactionSheet, 0, CANVAS_HEIGHT - 333, "sprite", {numberOfFrames: 2}),
+    gameTwoKassaSprite: new Component(648, 352, kassaReactionSheet, 297, CANVAS_HEIGHT - 333 /* 460 */, "sprite", {numberOfFrames: 4}),
+    gameTwoScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
+    gameTwoTextBubble: new Component(CANVAS_WIDTH - (BUTTON_DIST_FROM_Y_EDGE * 2) - BUTTON_RADIUS, BUTTON_HEIGHT, BUTTON_COLOR, BUTTON_DIST_FROM_Y_EDGE, BUTTON_DIST_FROM_X_EDGE, "button", {radius: BUTTON_RADIUS}),
 
     // Game 3
     myOpponentDesiredPosition: CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE,
@@ -154,6 +160,7 @@ let myGameArea = {
     this.readyToFire = true;
     this.countDownTimer = 1;
     this.clickCounter = 0;
+    this.reactTime = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
     this.gamepadConnected = (this.gamepadConnected || false);

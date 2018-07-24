@@ -16,7 +16,7 @@ function Component(width, height, color, x, y, type, options) {
     this.color = color;
   }
   if (type === "sprite") {
-    this.frame = 3;
+    this.frame = 0;
   }
   this.width = width;
   this.height = height;
@@ -91,7 +91,7 @@ function Component(width, height, color, x, y, type, options) {
            ctx.globalAlpha = options.transparency;
          }
       }
-      ctx.fillStyle = color;
+      ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.width, this.height);
       ctx.globalAlpha = 1;
     }

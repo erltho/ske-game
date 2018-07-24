@@ -179,7 +179,7 @@ function moneyInterval(myGameArea) {
 // Give each frame access to prng
 function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
   console.log(gameType);
-  if (gameType === 2) {
+  if (gameType === 3) {
     return function () {
       updateGameArea(myGameArea, gameElements, prng)
     }
@@ -187,8 +187,18 @@ function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
     return function () {
       gameOne(myGameArea, gameElements)
     }
+  } else if (gameType === 2) {
+    return function () {
+      gameTwo(myGameArea, gameElements)
+    }
   }
 }
+
+
+
+
+
+
 
 
 // GameOne
@@ -214,6 +224,7 @@ function gameOne(myGameArea, gameElements) {
   myGameArea.clear();
 
 
+  console.log(countDownTimer);
   // Gamepad integration
   if (myGameArea.gamepadConnected === true) {
     // Gamepad støtte om den er koblet til
@@ -259,6 +270,7 @@ function gameOne(myGameArea, gameElements) {
   if (countDownTimer > 0) {
     switch (myGameArea.clickCounter) {
       case 0:
+        gameOneGubbeSprite.frame = 3;
         gameOneButtonText.text = "Trykk på knappen for å starte spillet";
         break;
       case 1:
@@ -334,6 +346,82 @@ function gameOne(myGameArea, gameElements) {
     gameOneCountDownTimer.update(myGameArea);
     gameOneHourglass.update(myGameArea);
   }
+
+
+}
+
+
+
+// GameOne
+function gameTwo(myGameArea, gameElements) {
+
+
+  let {
+    gameTwoBackground,
+    gameTwoGubbeSprite,
+    gameTwoTextBubble,
+    gameTwoKassaSprite,
+    gameTwoScoreBackground,
+    gameOneScoreText,
+    gameOneButtonText,
+    score
+  } = gameElements;
+
+
+  myGameArea.clear();
+
+  if (myGameArea.frameNo <= 0){
+    // get score
+    score.update(15000);
+    gameOneButtonText.text = "Trykk på knappen for å starte spillet";
+    gameTwoKassaSprite.frame = 3;
+    gameTwoGubbeSprite.frame = 0;
+    console.log("fire");
+    myGameArea.reactTime = Math.round(Math.random() * (14 - 7) + 7);
+  }
+
+
+  // Gamepad integration
+  if (myGameArea.gamepadConnected === true) {
+    // Gamepad støtte om den er koblet til
+    let gamepad = navigator.getGamepads()[0];
+    let button1 = gamepad.buttons[0];
+    myGameArea.keys["ArrowUp"] = button1.value === 1;
+  }
+
+  if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
+    myGameArea.readyToFire = false;
+    myGameArea.firstClick = false;
+    gameOneButtonText.text = "Spillet er i gang, vent på signal...";
+  }
+
+  if (!myGameArea.keys["ArrowUp"]) {
+    myGameArea.readyToFire = true;
+  }
+
+  if (myGameArea.firstClick === false) {
+    myGameArea.frameNo += 1;
+    console.log("fire 2");
+    gameTwoBackground.color = "#df4661";
+    console.log(myGameArea.reactTime);
+
+
+
+    if (myGameArea.frameNo % 4 === 1) {
+      gameTwoKassaSprite.frame = Math.floor(Math.random() * 2.99);
+    }
+  }
+
+
+
+  gameTwoBackground.update(myGameArea);
+  gameTwoKassaSprite.update(myGameArea);
+  gameTwoGubbeSprite.update(myGameArea);
+  gameTwoTextBubble.update(myGameArea);
+  gameTwoScoreBackground.update(myGameArea);
+  gameOneScoreText.text = score.get() + ",- Kr";
+  gameOneScoreText.update(myGameArea);
+  gameOneButtonText.update(myGameArea);
 
 
 }
