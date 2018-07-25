@@ -20,7 +20,12 @@ const MONEY_DROP_INTERVAL = 200; // Default 200
 const MONEY_HEIGHT = 10; // Default 10
 const MONEY_WIDTH = 10; // Default 10
 
-// This code executes each frame
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GameThree
 function updateGameArea(myGameArea, gameElements, prng) {
 
   let {
@@ -194,13 +199,10 @@ function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
   }
 }
 
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GameOne
 function gameOne(myGameArea, gameElements) {
 
@@ -216,7 +218,14 @@ function gameOne(myGameArea, gameElements) {
     gameOneCountDownTimer,
     gameOneFace,
     gameOneEasterEgg,
-    score
+    score,
+    gameOneHelpTextBackground,
+    gameOneHelpTextLineOne,
+    gameOneHelpTextLineTwo,
+    gameOneHelpTextLineThree,
+    gameOneHelpTextLineFour,
+    gameOneHelpTextLineFive,
+    gameOneHelpTextLineSix
   } = gameElements;
 
   let countDownTimer = Math.abs((myGameArea.countDownTimer - myGameArea.frameNo * 0.015).toFixed(2));
@@ -224,7 +233,6 @@ function gameOne(myGameArea, gameElements) {
   myGameArea.clear();
 
 
-  console.log(countDownTimer);
   // Gamepad integration
   if (myGameArea.gamepadConnected === true) {
     // Gamepad støtte om den er koblet til
@@ -241,12 +249,19 @@ function gameOne(myGameArea, gameElements) {
 
 
   if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
-    score.update(123214);
-    gameOneGubbeSprite.frame = Math.floor(Math.random() * 2.99);
-    myGameArea.clickCounter += 1;
-    myGameArea.readyToFire = false;
-    myGameArea.firstClick = false;
-    console.log(myGameArea.clickCounter);
+    if (myGameArea.options === 1){
+      myGameArea.firstClick = false;
+      myGameArea.readyToFire = false;
+      console.log("Fox TWO");
+      score.update(123214);
+      gameOneGubbeSprite.frame = Math.floor(Math.random() * 2.99);
+      myGameArea.counter += 1;
+    } else if (myGameArea.options === 0){
+      myGameArea.readyToFire = false;
+      console.log("Fox ONE");
+      myGameArea.options = 1;
+    }
+
   }
 
   if (!myGameArea.keys["ArrowUp"]) {
@@ -268,7 +283,7 @@ function gameOne(myGameArea, gameElements) {
 
   // textboble
   if (countDownTimer > 0) {
-    switch (myGameArea.clickCounter) {
+    switch (myGameArea.counter) {
       case 0:
         gameOneGubbeSprite.frame = 3;
         gameOneButtonText.text = "Trykk på knappen for å starte spillet";
@@ -295,14 +310,13 @@ function gameOne(myGameArea, gameElements) {
     }
   } else {
     gameOneGubbeSprite.frame = 3;
-    gameOneButtonText.text = "Du klarte " + myGameArea.clickCounter + " trykk på 10 sekunder";
+    gameOneButtonText.text = "Du klarte " + myGameArea.counter + " trykk på 10 sekunder";
   }
 
 
-  if (gameOneEasterEgg.y > 600){
+  if (gameOneEasterEgg.y > 600) {
     gameOneEasterEgg.speedY = 0;
   }
-
 
 
   gameOneEasterEgg.newPos();
@@ -310,8 +324,11 @@ function gameOne(myGameArea, gameElements) {
   gameOneBackground.update(myGameArea);
   gameOneEasterEgg.update(myGameArea);
   gameOneGubbeSprite.update(myGameArea);
-  gameOneTextBubble.update(myGameArea);
-  gameOneButtonText.update(myGameArea);
+
+  if (myGameArea.options === 1){
+    gameOneTextBubble.update(myGameArea);
+    gameOneButtonText.update(myGameArea);
+  }
   gameOneScoreBackground.update(myGameArea);
   gameOneScoreText.text = score.get() + ",- Kr";
   gameOneScoreText.update(myGameArea);
@@ -327,7 +344,7 @@ function gameOne(myGameArea, gameElements) {
   if (myGameArea.firstClick === false) {
     myGameArea.frameNo += 1;
     if (countDownTimer <= 0) {
-      localStorage.setItem("buttonMashScore", score.get()) ;
+      localStorage.setItem("buttonMashScore", score.get());
       myGameArea.stop();
     } else {
       gameOneCountDownTimer.newPos();
@@ -337,22 +354,45 @@ function gameOne(myGameArea, gameElements) {
       gameOneHourglass.newPos();
       gameOneHourglass.update(myGameArea);
 
-      if (myGameArea.clickCounter >= 25) {
+      if (myGameArea.counter >= 25) {
         gameOneFace.update(myGameArea);
       }
     }
-  } else {
+  } else if (myGameArea.options === 1) {
     gameOneCountDownTimer.text = (10).toFixed(2) + "";
     gameOneCountDownTimer.update(myGameArea);
     gameOneHourglass.update(myGameArea);
   }
 
+  if (myGameArea.options === 0){
+    gameOneHelpTextBackground.update(myGameArea);
+    gameOneHelpTextLineOne.text = "Nivå 1: Hastighet";
+    gameOneHelpTextLineOne.update(myGameArea);
+    /*
+    gameOneHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
+    gameOneHelpTextLineTwo.update(myGameArea);
+    */
+    gameOneHelpTextLineThree.text = "Trykk på knappen så mange ganger du klarer i løpet av 10 sekunder";
+    gameOneHelpTextLineThree.update(myGameArea);
+    gameOneHelpTextLineFour.text = "Tiden starter fra første trykk etter at denne hjelpeteksten er borte";
+    gameOneHelpTextLineFour.update(myGameArea);
+    /*
+    gameOneHelpTextLineFive.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
+    gameOneHelpTextLineFive.update(myGameArea);
+    */
+    gameOneHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+    gameOneHelpTextLineSix.update(myGameArea);
+  }
+
 
 }
 
-
-
-// GameOne
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GameTwo
 function gameTwo(myGameArea, gameElements) {
 
 
@@ -364,20 +404,26 @@ function gameTwo(myGameArea, gameElements) {
     gameTwoScoreBackground,
     gameOneScoreText,
     gameOneButtonText,
-    score
+    score,
+    gameTwoHelpTextBackground,
+    gameTwoHelpTextLineOne,
+    gameTwoHelpTextLineTwo,
+    gameTwoHelpTextLineThree,
+    gameTwoHelpTextLineFour,
+    gameTwoHelpTextLineFive,
+    gameTwoHelpTextLineSix
   } = gameElements;
 
 
   myGameArea.clear();
 
-  if (myGameArea.frameNo <= 0){
+  if (myGameArea.frameNo <= 0) {
     // get score
     score.update(15000);
     gameOneButtonText.text = "Trykk på knappen for å starte spillet";
     gameTwoKassaSprite.frame = 3;
     gameTwoGubbeSprite.frame = 0;
-    console.log("fire");
-    myGameArea.reactTime = Math.round(Math.random() * (14 - 7) + 7);
+    myGameArea.reactTime = Math.round(Math.random() * (6 - 3) + 3);
   }
 
 
@@ -392,36 +438,88 @@ function gameTwo(myGameArea, gameElements) {
   if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
     myGameArea.readyToFire = false;
     myGameArea.firstClick = false;
-    gameOneButtonText.text = "Spillet er i gang, vent på signal...";
+
+    if (myGameArea.options === 2) {
+      gameOneButtonText.text = "Du trykket for tidlig og mistet halvparten av pengene";
+      gameTwoBackground.color = "#df4661";
+      gameTwoGubbeSprite.frame = 1;
+      score.update((score.get() / 2) * -1);
+      gameTwoKassaSprite.frame = 3;
+      myGameArea.stop();
+    } else if (myGameArea.options === 1) {
+      gameOneButtonText.text = "Spillet er i gang, vent på signal..";
+      myGameArea.options = 2;
+    } else if (myGameArea.options === 0) {
+      gameOneButtonText.text = "Trykk på knappen for å starte spillet";
+      myGameArea.options = 1;
+    }
+
+
+
+    if (myGameArea.options === 3){
+      myGameArea.options = 4;
+      gameOneButtonText.text = "Du brukte " + (myGameArea.frameNo * 1000) * 0.015 + "ms på å stoppe lekkasjen";
+      gameTwoGubbeSprite.frame = 0;
+      gameTwoBackground.color = "#CDB7BA";
+      myGameArea.stop();
+
+    }
   }
 
   if (!myGameArea.keys["ArrowUp"]) {
     myGameArea.readyToFire = true;
   }
 
-  if (myGameArea.firstClick === false) {
-    myGameArea.frameNo += 1;
-    console.log("fire 2");
-    gameTwoBackground.color = "#df4661";
-    console.log(myGameArea.reactTime);
-
-
-
-    if (myGameArea.frameNo % 4 === 1) {
-      gameTwoKassaSprite.frame = Math.floor(Math.random() * 2.99);
+  if (myGameArea.options === 2) {
+    myGameArea.counter += 1;
+    if (myGameArea.reactTime === myGameArea.counter * 0.01) {
+      myGameArea.frameNo = 1;
+      gameOneButtonText.text = "TRYKK PÅ KNAPPEN!!!";
+      gameTwoBackground.color = "#df4661";
+      gameTwoGubbeSprite.frame = 1;
+      myGameArea.options = 3;
     }
   }
 
+  if (myGameArea.options === 3) {
+    if (myGameArea.frameNo % 4 === 1) {
+      gameTwoKassaSprite.frame = Math.floor(Math.random() * 2.99);
+    }
+    score.update(-15);
+  }
 
+
+  myGameArea.frameNo += 1;
 
   gameTwoBackground.update(myGameArea);
   gameTwoKassaSprite.update(myGameArea);
   gameTwoGubbeSprite.update(myGameArea);
-  gameTwoTextBubble.update(myGameArea);
   gameTwoScoreBackground.update(myGameArea);
   gameOneScoreText.text = score.get() + ",- Kr";
   gameOneScoreText.update(myGameArea);
+if (myGameArea.options > 0) {
+  gameTwoTextBubble.update(myGameArea);
   gameOneButtonText.update(myGameArea);
+}
+  if (myGameArea.options === 0) {
+    gameTwoHelpTextBackground.update(myGameArea);
+    gameTwoHelpTextLineOne.text = "Nivå 2: Reaksjon";
+    gameTwoHelpTextLineOne.update(myGameArea);
+    /*
+    gameTwoHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
+    gameTwoHelpTextLineTwo.update(myGameArea);
+    */
+    gameTwoHelpTextLineThree.text = "Når spillet er i gang er det viktig å ikke trykke på knappen før du får beskjed";
+    gameTwoHelpTextLineThree.update(myGameArea);
+    gameTwoHelpTextLineFour.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
+    gameTwoHelpTextLineFour.update(myGameArea);
+    /*
+    gameTwoHelpTextLineFive.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
+    gameTwoHelpTextLineFive.update(myGameArea);
+    */
+    gameTwoHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+    gameTwoHelpTextLineSix.update(myGameArea);
+  }
 
 
 }

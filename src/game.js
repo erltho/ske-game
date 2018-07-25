@@ -65,6 +65,13 @@ function createDefaultGameElements() {
     gameOneHourglass: new Component(80, 80, hourglass, 600, 300, "image"),
     gameOneFace: new Component(55, 55, face, 207, 310, "image"),
     gameOneEasterEgg: new Component(10, 30, rock, 207, 420, "image"),
+    gameOneHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0,50, "rect", {transparency: 0.9}),
+    gameOneHelpTextLineOne: new Component("30", "Georgia", "black",CANVAS_WIDTH /2 , 80, "text", {textAlign: "center"}),
+    gameOneHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 110, "text", {textAlign: "center"}),
+    gameOneHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 140, "text", {textAlign: "center"}),
+    gameOneHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 170, "text", {textAlign: "center"}),
+    gameOneHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 200, "text", {textAlign: "center"}),
+    gameOneHelpTextLineSix: new Component("30", "Georgia", "black", CANVAS_WIDTH - 30, CANVAS_HEIGHT - 270, "text", {textAlign: "right"}),
 
     // Game 2
     gameTwoBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0,0),
@@ -72,6 +79,13 @@ function createDefaultGameElements() {
     gameTwoKassaSprite: new Component(648, 352, kassaReactionSheet, 297, CANVAS_HEIGHT - 333 /* 460 */, "sprite", {numberOfFrames: 4}),
     gameTwoScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
     gameTwoTextBubble: new Component(CANVAS_WIDTH - (BUTTON_DIST_FROM_Y_EDGE * 2) - BUTTON_RADIUS, BUTTON_HEIGHT, BUTTON_COLOR, BUTTON_DIST_FROM_Y_EDGE, BUTTON_DIST_FROM_X_EDGE, "button", {radius: BUTTON_RADIUS}),
+    gameTwoHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0,50, "rect", {transparency: 0.9}),
+    gameTwoHelpTextLineOne: new Component("30", "Georgia", "black",CANVAS_WIDTH /2 , 80, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 110, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 140, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 170, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 200, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineSix: new Component("30", "Georgia", "black", CANVAS_WIDTH - 30, CANVAS_HEIGHT - 270, "text", {textAlign: "right"}),
 
     // Game 3
     myOpponentDesiredPosition: CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE,
@@ -158,9 +172,10 @@ let myGameArea = {
     this.frameNo = 0;
     this.firstClick = true;
     this.readyToFire = true;
-    this.countDownTimer = 1;
-    this.clickCounter = 0;
+    this.countDownTimer = 10;
+    this.counter = 0;
     this.reactTime = 0;
+    this.options = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
     this.gamepadConnected = (this.gamepadConnected || false);
