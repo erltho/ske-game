@@ -56,7 +56,7 @@ function createDefaultGameElements() {
     gameOneGubbeSprite: new Component(GUBBE_SPRITE_WIDTH, GUBBE_SPRITE_HEIGHT, gubbeSpriteSheet, 0, CANVAS_HEIGHT - GUBBE_SPRITE_HEIGHT, "sprite", {numberOfFrames: 4}),
     gameOneBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0,0),
     gameOneTextBubble: new Component(CANVAS_WIDTH - (BUTTON_DIST_FROM_Y_EDGE * 2) - BUTTON_RADIUS, BUTTON_HEIGHT, BUTTON_COLOR, BUTTON_DIST_FROM_Y_EDGE, BUTTON_DIST_FROM_X_EDGE, "button", {radius: BUTTON_RADIUS}),
-    gameOneButtonText: new Component(35, "Georgia", "black", CANVAS_WIDTH / 2 , 82, "text", {textAlign: "center"}),
+    gameOneButtonText: new Component(30, "Georgia", "black", CANVAS_WIDTH / 2 , 82, "text", {textAlign: "center"}),
     gameOneScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
     gameOneScoreText: new Component(60, "Georgia", "#f4f4f4", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
     gameOneCountDownTimer: new Component(30, "Georgia", "black", 650, 350, "text", {textAlign: "left"}),
@@ -174,7 +174,7 @@ let myGameArea = {
     this.frameNo = 0;
     this.firstClick = true;
     this.readyToFire = true;
-    this.countDownTimer = 10; // Default 10
+    this.countDownTimer = 1; // Default 10
     this.counter = 0;
     this.reactTime = 0;
     this.options = 0;
