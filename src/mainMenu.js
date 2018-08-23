@@ -10,6 +10,7 @@ function loadMainMenu() {
   localStorage.setItem("BrukersNummer", "");
   localStorage.setItem("buttonMashScore", 0);
   localStorage.setItem("reactionGameScore", 0);
+  localStorage.setItem("sideScrollerScore", 0);
   localStorage.setItem("totalScore", 0);
 
   if (localStorage.getItem("scoreBoard") === null) {

@@ -1,6 +1,5 @@
 import MersenneTwister from 'mersenne-twister'
-import mountains from './assets/img/background/glacial_mountains_lightened.png'
-import smiley from './assets/img/player/smiley.gif'
+import background_image from './assets/img/background/basic_sky.png'
 import gubbeSpriteSheet from './assets/img/2017/GubbeAnimSpriteSheet.png';
 import kassaReactionSheet from './assets/img/other/kassaAnimNy.png';
 import gubbeReactionSheet from './assets/img/other/GubbeReactionSpriteSheet.png';
@@ -9,6 +8,8 @@ import rock from './assets/img/other/Rock.png';
 import face from './assets/img/other/Face.png';
 import {updateGameAreaWithRng} from './game/updateGameArea'
 import Component from './game/component';
+import flyingSprite from './assets/img/game_three/SuperSprite.png';
+import opponent from './assets/img/game_three/Skurk_px.png';
 
 // Canvas
 const CANVAS_WIDTH = 1000; // Default 800
@@ -32,15 +33,12 @@ const BUTTON_COLOR = "#f4f4f4";
 // Player
 const PLAYER_START_X = 10; // Default 10
 const PLAYER_START_Y = 120; // Default 120
-const PLAYER_WIDTH = 30; // Default 30
-const PLAYER_HEIGHT = 30; // Default 30
-const PLAYER_MOVEMENT_AREA = 140; // Default 140
 
 // Opponent
 const OPPONENT_HEIGHT = 30; // Default 30
-const OPPONENT_WIDTH = 30; // Default 30
-const OPPONENT_DIST_FROM_R_EDGE = 0; // Default 250
-const OPPONENT_START_Y = 250; // Default 250
+const OPPONENT_WIDTH = 40; // Default 30
+const OPPONENT_DIST_FROM_R_EDGE = 250; // Default 250
+const OPPONENT_START_Y = 150; // Default 250
 
 let gameType;
 gameType = 0;
@@ -92,10 +90,12 @@ function createDefaultGameElements() {
     score: new Score(),
     myMoney: [],
     myObstacles: [],
-    myBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, mountains, 0, 0, "background"),
+    myBackground: new Component(2160, CANVAS_HEIGHT, background_image, 0, 0, "background"),
     myScore: new Component("30", "Georgia", "black", 280, 40, "text", {textAlign: "left"}),
-    myOpponentPiece: new Component(OPPONENT_WIDTH, OPPONENT_HEIGHT, "red", CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent"),
-    myPlayerPiece: new Component(PLAYER_WIDTH, PLAYER_HEIGHT, smiley, PLAYER_START_X, PLAYER_START_Y, "image")
+    myScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
+    myScoreText: new Component(60, "Georgia", "#f4f4f4", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
+    myOpponentPiece: new Component(OPPONENT_WIDTH, OPPONENT_HEIGHT, opponent , CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent"),
+    myPlayerPiece: new Component(80, 30, flyingSprite, PLAYER_START_X, PLAYER_START_Y, "sprite", {numberOfFrames: 2})
   }
 }
 
@@ -121,18 +121,20 @@ function startGame() {
   }
 
   let canvas = document.getElementById("gameCanvas");
-  if (typeof(canvas) !== 'undefined' && canvas !== null)
-  {
+
+  if (gameType === 1) {
 
     let name = localStorage.getItem("BrukersNavn");
     let number = localStorage.getItem("BrukersNummer");
-
 
     let scoreArray = JSON.parse(localStorage.scoreBoard);
     let objPush = {"navn": name, "nummer": number};
     scoreArray.push(objPush);
     localStorage.scoreBoard = JSON.stringify(scoreArray);
+  }
 
+  if (typeof(canvas) !== 'undefined' && canvas !== null)
+  {
     canvas.parentNode.removeChild(canvas);
     myGameArea.stop();
     myGameArea.clear();
@@ -172,10 +174,12 @@ let myGameArea = {
     this.frameNo = 0;
     this.firstClick = true;
     this.readyToFire = true;
-    this.countDownTimer = 10;
+    this.countDownTimer = 10; // Default 10
     this.counter = 0;
     this.reactTime = 0;
     this.options = 0;
+    this.thiefScore = 0;
+    this.dropScore = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
     this.gamepadConnected = (this.gamepadConnected || false);

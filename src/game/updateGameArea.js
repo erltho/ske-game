@@ -1,5 +1,8 @@
 import Component from './component';
 
+import coinOne from '../assets/img/game_three/Mynt_1_px.png';
+import coinTwo from '../assets/img/game_three/Mynt_2_px.png';
+
 // Declare global constants
 
 // Obstacle
@@ -12,11 +15,11 @@ const OBSTACLE_MIN_DISTANCE = 140; // Default 140
 const OBSTACLE_DISTANCE_VARIETY_FACTOR = 30; // Default 30
 
 // Player Movement
-const PLAYER_MOVEMENT_AREA = 140; // Default 140
+const PLAYER_MOVEMENT_AREA = 460; // Default 140
 const PLAYER_SPEED = 2; // Default 2
 
 // Money
-const MONEY_DROP_INTERVAL = 200; // Default 200
+const MONEY_DROP_INTERVAL = 99; // Default 200
 const MONEY_HEIGHT = 10; // Default 10
 const MONEY_WIDTH = 10; // Default 10
 
@@ -34,12 +37,19 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myMoney,
     myObstacles,
     myBackground,
-    myScore,
     myOpponentPiece,
+    myScoreBackground,
+    myScoreText,
     myPlayerPiece
   } = gameElements;
 
   let aboutToCrashWith = null;
+
+  if (myGameArea.frameNo === 0) {
+    myGameArea.thiefScore = parseInt(localStorage.getItem("reactionGameScore"));
+    myGameArea.dropScore = Math.ceil(myGameArea.thiefScore / 100);
+  }
+
 
   // Avoids opponent collision with obstacles
   const avoidContact = function (obstacle) {
@@ -54,7 +64,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
   // Returns opponent to desired position when path is clear
   const returnToDesiredPosition = function () {
     myOpponentPiece.speedY = 0;
-    if (myOpponentPiece.x < myOpponentDesiredPosition)
+    if (myOpponentPiece.x < myOpponentPiece.desiredPosition)
       myOpponentPiece.speedX = 1;
     else myOpponentPiece.speedX = 0;
   };
@@ -64,10 +74,10 @@ function updateGameArea(myGameArea, gameElements, prng) {
 
     // Collision between player and obstacle
     if (myPlayerPiece.interactWith(myObstacles[i])) {
-      console.log("GAME OVER!");
+      localStorage.setItem("sideScrollerScore", score.get());
       myGameArea.stop();
-      return;
     }
+
     // Deletes obstacles not visible on canvas
     if (myObstacles[i].x <= -OBSTACLE_MIN_DISTANCE) {
       myObstacles.splice(i, 1);
@@ -83,12 +93,19 @@ function updateGameArea(myGameArea, gameElements, prng) {
   for (let i = 0; i < myMoney.length; i += 1) {
     // Collision between player and money
     if (myPlayerPiece.interactWith(myMoney[i])) {
-      score.update(123214);
+      score.update(myGameArea.dropScore);
       myMoney.splice(i, 1);
-      myOpponentDesiredPosition -= 10;
+      //myOpponentPiece.desiredPosition -= 100;
       break;
     }
   }
+  // Player and Opponent collision
+
+  if (myPlayerPiece.interactWith(myOpponentPiece)) {
+    score.update(myGameArea.thiefScore);
+    myGameArea.options = 1;
+  }
+
 
   // Controlls how the opponent moves
   if (aboutToCrashWith == null) returnToDesiredPosition();
@@ -110,6 +127,13 @@ function updateGameArea(myGameArea, gameElements, prng) {
     let gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
     myObstacles.push(new Component(OBSTACLE_WIDTH, height, "green", x, 0));
     myObstacles.push(new Component(OBSTACLE_WIDTH, x - height - gap, "green", x, height + gap));
+    if (myGameArea.frameNo === 1) {
+      myObstacles.push(new Component(OBSTACLE_WIDTH, 150, "green", 700, 0));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, 700 - 150 - gap, "green", 700, 150 + gap));
+
+      myObstacles.push(new Component(OBSTACLE_WIDTH, 300, "green", 900, 0));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, 900 - 300 - gap, "green", 900, 300 + gap));
+    }
   }
   // Moves obstacles
   for (let i = 0; i < myObstacles.length; i += 1) {
@@ -117,6 +141,10 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myObstacles[i].update(myGameArea);
   }
 
+
+  if (myGameArea.frameNo % 5 === 0) {
+    myPlayerPiece.frame = myGameArea.frameNo % 2;
+  }
 
   // Player
   // Gamepad integration
@@ -161,12 +189,24 @@ function updateGameArea(myGameArea, gameElements, prng) {
 
   // Spawn money
   if (moneyInterval(myGameArea)) {
-    myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, "blue", myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2)));
+
+    myGameArea.thiefScore -= myGameArea.dropScore;
+    if (myGameArea.frameNo % 2 === 1) {
+      myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, coinOne, myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2), "image"));
+    } else {
+      myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, coinTwo, myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2), "image"));
+    }
   }
 
+  myScoreBackground.update(myGameArea);
   // Score
-  myScore.text = "SCORE: " + score.get();
-  myScore.update(myGameArea);
+  myScoreText.text = score.get() + ",- Kr";
+  myScoreText.update(myGameArea);
+
+  if (myGameArea.options === 1) {
+    localStorage.setItem("sideScrollerScore", score.get());
+    myGameArea.stop();
+  }
 }
 
 
@@ -249,16 +289,14 @@ function gameOne(myGameArea, gameElements) {
 
 
   if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
-    if (myGameArea.options === 1){
+    if (myGameArea.options === 1) {
       myGameArea.firstClick = false;
       myGameArea.readyToFire = false;
-      console.log("Fox TWO");
       score.update(123214);
       gameOneGubbeSprite.frame = Math.floor(Math.random() * 2.99);
       myGameArea.counter += 1;
-    } else if (myGameArea.options === 0){
+    } else if (myGameArea.options === 0) {
       myGameArea.readyToFire = false;
-      console.log("Fox ONE");
       myGameArea.options = 1;
     }
 
@@ -325,7 +363,7 @@ function gameOne(myGameArea, gameElements) {
   gameOneEasterEgg.update(myGameArea);
   gameOneGubbeSprite.update(myGameArea);
 
-  if (myGameArea.options === 1){
+  if (myGameArea.options === 1) {
     gameOneTextBubble.update(myGameArea);
     gameOneButtonText.update(myGameArea);
   }
@@ -364,7 +402,7 @@ function gameOne(myGameArea, gameElements) {
     gameOneHourglass.update(myGameArea);
   }
 
-  if (myGameArea.options === 0){
+  if (myGameArea.options === 0) {
     gameOneHelpTextBackground.update(myGameArea);
     gameOneHelpTextLineOne.text = "Nivå 1: Hastighet";
     gameOneHelpTextLineOne.update(myGameArea);
@@ -419,7 +457,7 @@ function gameTwo(myGameArea, gameElements) {
 
   if (myGameArea.frameNo <= 0) {
     // get score
-    score.update(15000);
+    score.update(parseInt(localStorage.getItem("buttonMashScore")));
     gameOneButtonText.text = "Trykk på knappen for å starte spillet";
     gameTwoKassaSprite.frame = 3;
     gameTwoGubbeSprite.frame = 0;
@@ -445,6 +483,7 @@ function gameTwo(myGameArea, gameElements) {
       gameTwoGubbeSprite.frame = 1;
       score.update((score.get() / 2) * -1);
       gameTwoKassaSprite.frame = 3;
+      localStorage.setItem("reactionGameScore", score.get());
       myGameArea.stop();
     } else if (myGameArea.options === 1) {
       gameOneButtonText.text = "Spillet er i gang, vent på signal..";
@@ -455,12 +494,12 @@ function gameTwo(myGameArea, gameElements) {
     }
 
 
-
-    if (myGameArea.options === 3){
+    if (myGameArea.options === 3) {
       myGameArea.options = 4;
       gameOneButtonText.text = "Du brukte " + (myGameArea.frameNo * 1000) * 0.015 + "ms på å stoppe lekkasjen";
       gameTwoGubbeSprite.frame = 0;
       gameTwoBackground.color = "#CDB7BA";
+      localStorage.setItem("reactionGameScore", score.get());
       myGameArea.stop();
 
     }
@@ -485,7 +524,7 @@ function gameTwo(myGameArea, gameElements) {
     if (myGameArea.frameNo % 4 === 1) {
       gameTwoKassaSprite.frame = Math.floor(Math.random() * 2.99);
     }
-    score.update(-15);
+    score.update(-65425);
   }
 
 
@@ -497,10 +536,10 @@ function gameTwo(myGameArea, gameElements) {
   gameTwoScoreBackground.update(myGameArea);
   gameOneScoreText.text = score.get() + ",- Kr";
   gameOneScoreText.update(myGameArea);
-if (myGameArea.options > 0) {
-  gameTwoTextBubble.update(myGameArea);
-  gameOneButtonText.update(myGameArea);
-}
+  if (myGameArea.options > 0) {
+    gameTwoTextBubble.update(myGameArea);
+    gameOneButtonText.update(myGameArea);
+  }
   if (myGameArea.options === 0) {
     gameTwoHelpTextBackground.update(myGameArea);
     gameTwoHelpTextLineOne.text = "Nivå 2: Reaksjon";
