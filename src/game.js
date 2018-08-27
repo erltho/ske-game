@@ -37,7 +37,7 @@ const PLAYER_START_Y = 120; // Default 120
 // Opponent
 const OPPONENT_HEIGHT = 30; // Default 30
 const OPPONENT_WIDTH = 40; // Default 30
-const OPPONENT_DIST_FROM_R_EDGE = 250; // Default 250
+const OPPONENT_DIST_FROM_R_EDGE = 150; // Default 250
 const OPPONENT_START_Y = 150; // Default 250
 
 let gameType;

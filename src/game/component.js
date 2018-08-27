@@ -12,6 +12,11 @@ function Component(width, height, color, x, y, type, options) {
   if (type === "image" || type === "background" || type === "sprite" || type === "opponent") {
     this.image = new Image();
     this.image.src = color;
+    if (typeof options !== "undefined") {
+      if (typeof options.direction !== "undefined") {
+        this.direction = options.direction;
+      }
+    }
   } else {
     this.color = color;
   }

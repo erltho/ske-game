@@ -2,6 +2,9 @@ import Component from './component';
 
 import coinOne from '../assets/img/game_three/Mynt_1_px.png';
 import coinTwo from '../assets/img/game_three/Mynt_2_px.png';
+import stolpeEndBunn from '../assets/img/game_three/Stolpe_end_bunn.png';
+import stolpeEndTopp from '../assets/img/game_three/Stolpe_end_topp.png';
+import stolpeMiddle from '../assets/img/game_three/Stolpe_m.png';
 
 // Declare global constants
 
@@ -13,6 +16,8 @@ const OBSTACLE_MIN_GAP = 50; // Default 50
 const OBSTACLE_MAX_GAP = 150; // Default 150
 const OBSTACLE_MIN_DISTANCE = 140; // Default 140
 const OBSTACLE_DISTANCE_VARIETY_FACTOR = 30; // Default 30
+const OBSTACLE_END_HEIGHT = 81; // 81
+const OBSTACLE_IMG_HEIGHT = 72; // 72
 
 // Player Movement
 const PLAYER_MOVEMENT_AREA = 460; // Default 140
@@ -53,7 +58,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
 
   // Avoids opponent collision with obstacles
   const avoidContact = function (obstacle) {
-    if (obstacle.y === 0) {
+    if (obstacle.direction === 0) {
       myOpponentPiece.speedY = 2;
       myOpponentPiece.speedX = -1;
     } else {
@@ -123,17 +128,82 @@ function updateGameArea(myGameArea, gameElements, prng) {
   // Spawns obstacles
   if (myGameArea.frameNo === 1 || objectInterval(myGameArea)) {
     let x = myGameArea.canvas.width + (Math.floor(OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1)));
-    let height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT + 1) + OBSTACLE_MIN_HEIGHT);
+    let height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT) + OBSTACLE_MIN_HEIGHT);
     let gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
-    myObstacles.push(new Component(OBSTACLE_WIDTH, height, "green", x, 0));
-    myObstacles.push(new Component(OBSTACLE_WIDTH, x - height - gap, "green", x, height + gap));
-    if (myGameArea.frameNo === 1) {
-      myObstacles.push(new Component(OBSTACLE_WIDTH, 150, "green", 700, 0));
-      myObstacles.push(new Component(OBSTACLE_WIDTH, 700 - 150 - gap, "green", 700, 150 + gap));
+    if (height <= 82) {
+      let i;
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image", {direction: 1}));
+      let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+      for (i = 0; i < objectBotCount; i++) {
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+      }
+    } else if ((height + gap) >= 519) {
+      let objectCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+      let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectCount);
+      let i;
+      for (i = 0; i < objectCount; i++) {
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+      }
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image"));
 
-      myObstacles.push(new Component(OBSTACLE_WIDTH, 300, "green", 900, 0));
-      myObstacles.push(new Component(OBSTACLE_WIDTH, 900 - 300 - gap, "green", 900, 300 + gap));
+    } else {
+
+      let objectTopCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+      let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectTopCount);
+      let i;
+      for (i = 0; i < objectTopCount; i++) {
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+      }
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image", {direction: 1}));
+      let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+      for (i = 0; i < objectBotCount; i++) {
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+      }
     }
+
+
+
+    if (myGameArea.frameNo === 1) {
+      height = 125;
+      if (height <= 82) {
+        let i;
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image", {direction: 1}));
+        let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+        for (i = 0; i < objectBotCount; i++) {
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+        }
+      } else if ((height + gap) >= 519) {
+        let objectCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+        let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectCount);
+        let i;
+        for (i = 0; i < objectCount; i++) {
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+        }
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image"));
+
+      } else {
+
+        let objectTopCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+        let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectTopCount);
+        let i;
+        for (i = 0; i < objectTopCount; i++) {
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+        }
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image", {direction: 1}));
+        let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
+        for (i = 0; i < objectBotCount; i++) {
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+        }
+      }
+    }
+
+
   }
   // Moves obstacles
   for (let i = 0; i < myObstacles.length; i += 1) {
