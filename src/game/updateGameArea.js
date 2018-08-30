@@ -45,6 +45,14 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myOpponentPiece,
     myScoreBackground,
     myScoreText,
+    myGameHelpTextBackground,
+    myGameHelpTextLineOne,
+    myGameHelpTextLineTwo,
+    myGameHelpTextLineThree,
+    myGameHelpTextLineFour,
+    myGameHelpTextLineFive,
+    myGameHelpTextLineSix,
+    myGameHelpTextLineSeven,
     myPlayerPiece
   } = gameElements;
 
@@ -53,6 +61,26 @@ function updateGameArea(myGameArea, gameElements, prng) {
   if (myGameArea.frameNo === 0) {
     myGameArea.thiefScore = parseInt(localStorage.getItem("reactionGameScore"));
     myGameArea.dropScore = Math.ceil(myGameArea.thiefScore / 100);
+  }
+
+  // Gamepad integration
+  if (myGameArea.gamepadConnected === true) {
+    // Gamepad støtte om den er koblet til
+    let gamepad = navigator.getGamepads()[0];
+    let axis1 = gamepad.axes[0];
+    let axis2 = gamepad.axes[1];
+    myGameArea.keys["ArrowLeft"] = axis1 === -1;
+    myGameArea.keys["ArrowRight"] = axis1 === 1;
+    myGameArea.keys["ArrowUp"] = axis2 === -1;
+    myGameArea.keys["ArrowDown"] = axis2 === 1;
+    let button1 = gamepad.buttons[0];
+    let button2 = gamepad.buttons[1];
+    myGameArea.keys[" "] = button1.value === 1;
+    myGameArea.keys["Enter"] = button2.value === 1;
+
+    if (button2.value === 1) {
+      document.getElementById("myBtn").click();
+    }
   }
 
 
@@ -108,7 +136,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
 
   if (myPlayerPiece.interactWith(myOpponentPiece)) {
     score.update(myGameArea.thiefScore);
-    myGameArea.options = 1;
+    myGameArea.options = 2;
   }
 
 
@@ -116,75 +144,123 @@ function updateGameArea(myGameArea, gameElements, prng) {
   if (aboutToCrashWith == null) returnToDesiredPosition();
   else avoidContact(aboutToCrashWith);
 
-  // Next frame
-  myGameArea.clear();
-  myGameArea.frameNo += 1;
-
-  // Background
-  myBackground.speedX = -1;
-  myBackground.newPos();
-  myBackground.update(myGameArea);
-
-  // Spawns obstacles
-  if (myGameArea.frameNo === 1 || objectInterval(myGameArea)) {
-    let x = myGameArea.canvas.width + (Math.floor(OBSTACLE_DISTANCE_VARIETY_FACTOR * (prng.random() + 1)));
-    let height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT) + OBSTACLE_MIN_HEIGHT);
-    let gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
-    if (height <= 82) {
-      let i;
-      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
-      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image", {direction: 1}));
-      let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
-      for (i = 0; i < objectBotCount; i++) {
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
-      }
-    } else if ((height + gap) >= 519) {
-      let objectCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
-      let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectCount);
-      let i;
-      for (i = 0; i < objectCount; i++) {
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
-      }
-      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
-      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image"));
-
-    } else {
-
+  //////////////
+  // Pre-game //
+  //////////////
+  if (myGameArea.options === 0) {
+    myBackground.update(myGameArea);
+    myOpponentPiece.update(myGameArea);
+    myPlayerPiece.update(myGameArea);
+    myScoreBackground.update(myGameArea);
+    myScoreText.text = score.get() + ",- Kr";
+    myScoreText.update(myGameArea);
+    let x = myGameArea.canvas.width;
+    let height;
+    let gap;
+    height = 125;
+    gap = 75;
+    if (myGameArea.firstClick === true) {
       let objectTopCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
       let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectTopCount);
       let i;
       for (i = 0; i < objectTopCount; i++) {
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
       }
-      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
-      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image", {direction: 1}));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+      myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image", {direction: 1}));
       let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
       for (i = 0; i < objectBotCount; i++) {
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
       }
+      myGameArea.firstClick = false;
     }
 
+    for (let i = 0; i < myObstacles.length; i += 1) {
+      myObstacles[i].update(myGameArea);
+    }
+    myGameHelpTextBackground.update(myGameArea);
+    if (myGameArea.thiefScore < 0) {
+      myGameHelpTextLineOne.text = "Siste nivå: Fingerferdighet";
+      myGameHelpTextLineOne.update(myGameArea);
+      /*
+      myGameHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
+      myGameHelpTextLineTwo.update(myGameArea);
+      */
+      myGameHelpTextLineThree.text = "En skattesnyter har stukket av med gjelda di";
+      myGameHelpTextLineThree.update(myGameArea);
+      myGameHelpTextLineFour.text = "Ta igjen tyven for å bli en gjeldsslave igjen!";
+      myGameHelpTextLineFour.update(myGameArea);
+
+      myGameHelpTextLineFive.text = "Prøv å plukke opp gjelda som tyven mister på veien";
+      myGameHelpTextLineFive.update(myGameArea);
 
 
-    if (myGameArea.frameNo === 1) {
-      height = 125;
+      myGameHelpTextLineSeven.text = "Du kan bevege deg på venstre halvdel av spillområdet";
+      myGameHelpTextLineSeven.update(myGameArea);
+
+      myGameHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+      myGameHelpTextLineSix.update(myGameArea);
+    } else {
+      myGameHelpTextLineOne.text = "Siste nivå: Fingerferdighet";
+      myGameHelpTextLineOne.update(myGameArea);
+      /*
+      myGameHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
+      myGameHelpTextLineTwo.update(myGameArea);
+      */
+      myGameHelpTextLineThree.text = "En skattesnyter har stukket av med innholdet av skattekassa";
+      myGameHelpTextLineThree.update(myGameArea);
+      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven, men se opp for hinder!";
+      myGameHelpTextLineFour.update(myGameArea);
+
+      myGameHelpTextLineFive.text = "Prøv å plukke opp pengene som tyven mister på veien";
+      myGameHelpTextLineFive.update(myGameArea);
+
+
+      myGameHelpTextLineSeven.text = "Du kan bevege deg på venstre halvdel av spillområdet";
+      myGameHelpTextLineSeven.update(myGameArea);
+
+      myGameHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+      myGameHelpTextLineSix.update(myGameArea);
+    }
+    if (myGameArea.keys[" "]) {
+      myGameArea.options = 1;
+    }
+
+    //////////
+    // Game //
+    //////////
+  } else {
+    // Next frame
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+
+    // Background
+    myBackground.speedX = -1;
+    myBackground.newPos();
+    myBackground.update(myGameArea);
+
+    // Spawns obstacles
+    if (myGameArea.frameNo === 1 || objectInterval(myGameArea)) {
+      let x = myGameArea.canvas.width;
+      let height = Math.floor(prng.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT) + OBSTACLE_MIN_HEIGHT);
+      let gap = Math.floor(prng.random() * (OBSTACLE_MAX_GAP - OBSTACLE_MIN_GAP + 1) + OBSTACLE_MIN_GAP);
       if (height <= 82) {
         let i;
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image", {direction: 1}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image", {direction: 1}));
         let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
         for (i = 0; i < objectBotCount; i++) {
-          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
         }
       } else if ((height + gap) >= 519) {
         let objectCount = Math.ceil((height - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
         let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectCount);
         let i;
         for (i = 0; i < objectCount; i++) {
-          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
         }
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image"));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image"));
 
       } else {
 
@@ -192,90 +268,77 @@ function updateGameArea(myGameArea, gameElements, prng) {
         let firstObjectY = height - OBSTACLE_END_HEIGHT - (OBSTACLE_IMG_HEIGHT * objectTopCount);
         let i;
         for (i = 0; i < objectTopCount; i++) {
-          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, firstObjectY + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 0}));
         }
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x - 300, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
-        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x - 300, height + gap, "image", {direction: 1}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndBunn, x, height - OBSTACLE_END_HEIGHT, "image", {direction: 0}));
+        myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_END_HEIGHT, stolpeEndTopp, x, height + gap, "image", {direction: 1}));
         let objectBotCount = Math.ceil((600 - height - gap - OBSTACLE_END_HEIGHT) / OBSTACLE_IMG_HEIGHT);
         for (i = 0; i < objectBotCount; i++) {
-          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x - 300, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
+          myObstacles.push(new Component(OBSTACLE_WIDTH, OBSTACLE_IMG_HEIGHT, stolpeMiddle, x, height + gap + OBSTACLE_END_HEIGHT + (i * OBSTACLE_IMG_HEIGHT), "image", {direction: 1}));
         }
       }
     }
-
-
-  }
-  // Moves obstacles
-  for (let i = 0; i < myObstacles.length; i += 1) {
-    myObstacles[i].x += -1;
-    myObstacles[i].update(myGameArea);
-  }
-
-
-  if (myGameArea.frameNo % 5 === 0) {
-    myPlayerPiece.frame = myGameArea.frameNo % 2;
-  }
-
-  // Player
-  // Gamepad integration
-  if (myGameArea.gamepadConnected === true) {
-    // Gamepad støtte om den er koblet til
-    let gamepad = navigator.getGamepads()[0];
-    let axis1 = gamepad.axes[0];
-    let axis2 = gamepad.axes[1];
-    myGameArea.keys["ArrowLeft"] = axis1 === -1;
-    myGameArea.keys["ArrowRight"] = axis1 === 1;
-    myGameArea.keys["ArrowUp"] = axis2 === -1;
-    myGameArea.keys["ArrowDown"] = axis2 === 1;
-  }
-  // Movement
-  myPlayerPiece.speedX = 0;
-  myPlayerPiece.speedY = 0;
-  if (myGameArea.keys["ArrowLeft"] && myPlayerPiece.x >= PLAYER_SPEED) {
-    myPlayerPiece.speedX = -PLAYER_SPEED;
-  }
-  if (myGameArea.keys["ArrowRight"] && myPlayerPiece.x <= PLAYER_MOVEMENT_AREA) {
-    myPlayerPiece.speedX = PLAYER_SPEED;
-  }
-  if (myGameArea.keys["ArrowUp"] && myPlayerPiece.y >= PLAYER_SPEED) {
-    myPlayerPiece.speedY = -PLAYER_SPEED;
-  }
-  if (myGameArea.keys["ArrowDown"] && myPlayerPiece.y <= (myGameArea.canvas.height - myPlayerPiece.height - PLAYER_SPEED)) {
-    myPlayerPiece.speedY = PLAYER_SPEED;
-  }
-  myPlayerPiece.newPos();
-  myPlayerPiece.update(myGameArea);
-
-
-  // Draw money
-  for (let i = 0; i < myMoney.length; i += 1) {
-    myMoney[i].x += -1;
-    myMoney[i].update(myGameArea);
-  }
-
-  // Opponent
-  myOpponentPiece.newPos();
-  myOpponentPiece.update(myGameArea);
-
-  // Spawn money
-  if (moneyInterval(myGameArea)) {
-
-    myGameArea.thiefScore -= myGameArea.dropScore;
-    if (myGameArea.frameNo % 2 === 1) {
-      myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, coinOne, myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2), "image"));
-    } else {
-      myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, coinTwo, myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2), "image"));
+    // Moves obstacles
+    for (let i = 0; i < myObstacles.length; i += 1) {
+      myObstacles[i].x += -1;
+      myObstacles[i].update(myGameArea);
     }
-  }
 
-  myScoreBackground.update(myGameArea);
-  // Score
-  myScoreText.text = score.get() + ",- Kr";
-  myScoreText.update(myGameArea);
 
-  if (myGameArea.options === 1) {
-    localStorage.setItem("sideScrollerScore", score.get());
-    myGameArea.stop();
+    if (myGameArea.frameNo % 5 === 0) {
+      myPlayerPiece.frame = myGameArea.frameNo % 2;
+    }
+
+    // Player
+    // Movement
+    myPlayerPiece.speedX = 0;
+    myPlayerPiece.speedY = 0;
+    if (myGameArea.keys["ArrowLeft"] && myPlayerPiece.x >= PLAYER_SPEED) {
+      myPlayerPiece.speedX = -PLAYER_SPEED;
+    }
+    if (myGameArea.keys["ArrowRight"] && myPlayerPiece.x <= PLAYER_MOVEMENT_AREA) {
+      myPlayerPiece.speedX = PLAYER_SPEED;
+    }
+    if (myGameArea.keys["ArrowUp"] && myPlayerPiece.y >= PLAYER_SPEED) {
+      myPlayerPiece.speedY = -PLAYER_SPEED;
+    }
+    if (myGameArea.keys["ArrowDown"] && myPlayerPiece.y <= (myGameArea.canvas.height - myPlayerPiece.height - PLAYER_SPEED)) {
+      myPlayerPiece.speedY = PLAYER_SPEED;
+    }
+    myPlayerPiece.newPos();
+    myPlayerPiece.update(myGameArea);
+
+
+    // Draw money
+    for (let i = 0; i < myMoney.length; i += 1) {
+      myMoney[i].x += -1;
+      myMoney[i].update(myGameArea);
+    }
+
+    // Opponent
+    myOpponentPiece.newPos();
+    myOpponentPiece.update(myGameArea);
+
+    // Spawn money
+    if (moneyInterval(myGameArea)) {
+
+      myGameArea.thiefScore -= myGameArea.dropScore;
+      if (myGameArea.frameNo % 2 === 1) {
+        myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, coinOne, myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2), "image"));
+      } else {
+        myMoney.push(new Component(MONEY_WIDTH, MONEY_HEIGHT, coinTwo, myOpponentPiece.x, myOpponentPiece.y + (myOpponentPiece.height / 2) - (MONEY_HEIGHT / 2), "image"));
+      }
+    }
+
+    myScoreBackground.update(myGameArea);
+    // Score
+    myScoreText.text = score.get() + ",- Kr";
+    myScoreText.update(myGameArea);
+
+    if (myGameArea.options === 2) {
+      localStorage.setItem("sideScrollerScore", score.get());
+      myGameArea.stop();
+    }
   }
 }
 
@@ -293,7 +356,6 @@ function moneyInterval(myGameArea) {
 
 // Give each frame access to prng
 function updateGameAreaWithRng(myGameArea, gameElements, prng, gameType) {
-  console.log(gameType);
   if (gameType === 3) {
     return function () {
       updateGameArea(myGameArea, gameElements, prng)
@@ -348,7 +410,13 @@ function gameOne(myGameArea, gameElements) {
     // Gamepad støtte om den er koblet til
     let gamepad = navigator.getGamepads()[0];
     let button1 = gamepad.buttons[0];
-    myGameArea.keys["ArrowUp"] = button1.value === 1;
+    let button2 = gamepad.buttons[1];
+    myGameArea.keys[" "] = button1.value === 1;
+    myGameArea.keys["Enter"] = button2.value === 1;
+
+    if (button2.value === 1) {
+      document.getElementById("myBtn").click();
+    }
   }
 
   gameOneCountDownTimer.growthW = 0;
@@ -358,7 +426,7 @@ function gameOne(myGameArea, gameElements) {
   gameOneHourglass.speedY = 0;
 
 
-  if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
+  if (myGameArea.keys[" "] && myGameArea.readyToFire === true) {
     if (myGameArea.options === 1) {
       myGameArea.firstClick = false;
       myGameArea.readyToFire = false;
@@ -372,7 +440,7 @@ function gameOne(myGameArea, gameElements) {
 
   }
 
-  if (!myGameArea.keys["ArrowUp"]) {
+  if (!myGameArea.keys[" "]) {
     myGameArea.readyToFire = true;
   }
 
@@ -480,14 +548,16 @@ function gameOne(myGameArea, gameElements) {
     gameOneHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
     gameOneHelpTextLineTwo.update(myGameArea);
     */
-    gameOneHelpTextLineThree.text = "Trykk på knappen så mange ganger du klarer i løpet av 10 sekunder";
+    gameOneHelpTextLineThree.text = "Du må pumpe opp noen penger for å holde liv i velferdsstaten";
     gameOneHelpTextLineThree.update(myGameArea);
-    gameOneHelpTextLineFour.text = "Tiden starter fra første trykk etter at denne hjelpeteksten er borte";
+    gameOneHelpTextLineFour.text = "Trykk på knappen så mange ganger du klarer i løpet av 10 sekunder";
     gameOneHelpTextLineFour.update(myGameArea);
+
     /*
-    gameOneHelpTextLineFive.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
+    gameOneHelpTextLineFive.text = "Tiden starter fra første trykk etter at denne hjelpeteksten er borte";
     gameOneHelpTextLineFive.update(myGameArea);
     */
+
     gameOneHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
     gameOneHelpTextLineSix.update(myGameArea);
   }
@@ -540,10 +610,15 @@ function gameTwo(myGameArea, gameElements) {
     // Gamepad støtte om den er koblet til
     let gamepad = navigator.getGamepads()[0];
     let button1 = gamepad.buttons[0];
-    myGameArea.keys["ArrowUp"] = button1.value === 1;
+    let button2 = gamepad.buttons[1];
+    myGameArea.keys[" "] = button1.value === 1;
+    myGameArea.keys["Enter"] = button2.value === 1;
+    if (button2.value === 1) {
+      document.getElementById("myBtn").click();
+    }
   }
 
-  if (myGameArea.keys["ArrowUp"] && myGameArea.readyToFire === true) {
+  if (myGameArea.keys[" "] && myGameArea.readyToFire === true) {
     myGameArea.readyToFire = false;
     myGameArea.firstClick = false;
 
@@ -575,7 +650,7 @@ function gameTwo(myGameArea, gameElements) {
     }
   }
 
-  if (!myGameArea.keys["ArrowUp"]) {
+  if (!myGameArea.keys[" "]) {
     myGameArea.readyToFire = true;
   }
 
@@ -618,14 +693,14 @@ function gameTwo(myGameArea, gameElements) {
     gameTwoHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
     gameTwoHelpTextLineTwo.update(myGameArea);
     */
-    gameTwoHelpTextLineThree.text = "Når spillet er i gang er det viktig å ikke trykke på knappen før du får beskjed";
+    gameTwoHelpTextLineThree.text = "Staten er bekymret for lekasje i skattekassa";
     gameTwoHelpTextLineThree.update(myGameArea);
-    gameTwoHelpTextLineFour.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
+    gameTwoHelpTextLineFour.text = "Trykk på knappen når du får beskjed, men ikke før!";
     gameTwoHelpTextLineFour.update(myGameArea);
-    /*
+
     gameTwoHelpTextLineFive.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
     gameTwoHelpTextLineFive.update(myGameArea);
-    */
+
     gameTwoHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
     gameTwoHelpTextLineSix.update(myGameArea);
   }

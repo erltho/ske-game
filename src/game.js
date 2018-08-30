@@ -95,6 +95,14 @@ function createDefaultGameElements() {
     myScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
     myScoreText: new Component(60, "Georgia", "#f4f4f4", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
     myOpponentPiece: new Component(OPPONENT_WIDTH, OPPONENT_HEIGHT, opponent , CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent"),
+    myGameHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0,50, "rect", {transparency: 0.9}),
+    myGameHelpTextLineOne: new Component("30", "Georgia", "black",CANVAS_WIDTH /2 , 80, "text", {textAlign: "center"}),
+    myGameHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 110, "text", {textAlign: "center"}),
+    myGameHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 140, "text", {textAlign: "center"}),
+    myGameHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 170, "text", {textAlign: "center"}),
+    myGameHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 200, "text", {textAlign: "center"}),
+    myGameHelpTextLineSix: new Component("30", "Georgia", "black", CANVAS_WIDTH - 30, CANVAS_HEIGHT - 270, "text", {textAlign: "right"}),
+    myGameHelpTextLineSeven: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 230, "text", {textAlign: "center"}),
     myPlayerPiece: new Component(80, 30, flyingSprite, PLAYER_START_X, PLAYER_START_Y, "sprite", {numberOfFrames: 2})
   }
 }
@@ -107,47 +115,57 @@ function startGame() {
   let firstGameStart = true;
   gameType += 1;
 
+  if (gameType === 4) {
+    console.log(gameType);
+    let canvas = document.getElementById("gameCanvas");
+    if (typeof(canvas) !== 'undefined' && canvas !== null) {
+      canvas.parentNode.removeChild(canvas);
+      myGameArea.stop();
+      myGameArea.clear();
+      myGameArea.keys = [];
+      firstGameStart = false;
+    }
 
 
-  if (typeof(element) !== 'undefined' && element !== null)
-  {
+  } else {
 
-    let user = document.getElementById("nameField").value;
-    localStorage.setItem("BrukersNavn", user) ;
-    let tlfNumber = document.getElementById("numberField").value;
-    localStorage.setItem("BrukersNummer", tlfNumber) ;
+    console.log(gameType);
+    if (typeof(element) !== 'undefined' && element !== null) {
 
-    element.parentNode.removeChild(element);
+      let user = document.getElementById("nameField").value;
+      localStorage.setItem("BrukersNavn", user);
+      let tlfNumber = document.getElementById("numberField").value;
+      localStorage.setItem("BrukersNummer", tlfNumber);
+
+      element.parentNode.removeChild(element);
+    }
+
+    let canvas = document.getElementById("gameCanvas");
+
+    if (gameType === 1) {
+
+      let name = localStorage.getItem("BrukersNavn");
+      let number = localStorage.getItem("BrukersNummer");
+
+      let scoreArray = JSON.parse(localStorage.scoreBoard);
+      let objPush = {"navn": name, "nummer": number};
+      scoreArray.push(objPush);
+      localStorage.scoreBoard = JSON.stringify(scoreArray);
+    }
+
+    if (typeof(canvas) !== 'undefined' && canvas !== null) {
+      canvas.parentNode.removeChild(canvas);
+      myGameArea.stop();
+      myGameArea.clear();
+      myGameArea.keys = [];
+      firstGameStart = false;
+    }
+
+
+    // start game
+    let prng = new MersenneTwister(1337);
+    myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
   }
-
-  let canvas = document.getElementById("gameCanvas");
-
-  if (gameType === 1) {
-
-    let name = localStorage.getItem("BrukersNavn");
-    let number = localStorage.getItem("BrukersNummer");
-
-    let scoreArray = JSON.parse(localStorage.scoreBoard);
-    let objPush = {"navn": name, "nummer": number};
-    scoreArray.push(objPush);
-    localStorage.scoreBoard = JSON.stringify(scoreArray);
-  }
-
-  if (typeof(canvas) !== 'undefined' && canvas !== null)
-  {
-    canvas.parentNode.removeChild(canvas);
-    myGameArea.stop();
-    myGameArea.clear();
-    myGameArea.keys = [];
-    firstGameStart = false;
-    console.log("Canvas removed");
-  }
-
-
-  // start game
-  let prng = new MersenneTwister(1337);
-  myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
-  console.log("Game started!");
 }
 
 
@@ -182,13 +200,14 @@ let myGameArea = {
     this.dropScore = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
-    this.gamepadConnected = (this.gamepadConnected || false);
-    console.log("myGameArea Started!");
+    this.gamepadConnected = (this.gamepadConnected || navigator.getGamepads()[0].connected ||false);
+    console.log(this.gamepadConnected);
 
     if (firstGameStart === true) {
 
       window.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " ") {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+          console.log(e.key);
           e.preventDefault();
         }
           this.keys[e.key] = (e.type === "keydown");
@@ -200,6 +219,7 @@ let myGameArea = {
       });
     }
     window.addEventListener('gamepadconnected', (e) => {
+      console.log("Trouble");
       this.gamepadConnected = e.gamepad.connected;
       console.log(e.gamepad.connected);
       console.log(e);
