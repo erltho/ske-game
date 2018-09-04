@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import {startGame, restart} from './game'
 import SkeBasis from 'aurora-frontend-react-komponenter/SkeBasis';
 import Button from 'aurora-frontend-react-komponenter/Button';
-import MenuLayout from './layout'
+import {MenuLayout, GameOverLayout} from './layout'
 import {loadMainMenu, inputValidator} from './mainMenu'
 
 import './index.css'
@@ -12,8 +12,15 @@ class MainMenu extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {gamepadConnected: false};
+    this.state = {
+      gamepadConnected: false,
+      gameEnded: false
+    };
+    this.endGame = this.endGame.bind(this);
   }
+
+
+
 
   componentDidMount() {
 
@@ -49,6 +56,23 @@ class MainMenu extends React.Component {
     clearInterval(this.timerID);
   }
 
+  endGame() {
+    console.log("endGame" +  this.endGame);
+    this.setState(
+      Object.assign(
+        this.state,
+        {gameEnded: true}
+        )
+    );
+  //   this.setState(
+  //     {
+  //       ...this.state,
+  //       gameEnded: true
+  //      }
+  //     )
+  // ;
+  }
+
 
   tick() {
     if (this.state.gamepadConnected === true){
@@ -63,17 +87,21 @@ class MainMenu extends React.Component {
 
 
   render() {
-    console.log("render");
+    console.log("render" +  this.endGame);
+var f = startGame(this.endGame);
+      if(! this.state.gameEnded) {
+        return (<MenuLayout endGameFun={this.endGame}>
+          <div id="game"/>
+          <Button id="myBtn" buttonType="primary" onClick={f}>Neste</Button>
+        </MenuLayout>);
+      } else {
+        return (<GameOverLayout>
+          <div id="game"/>
+          <Button id="myBtn" buttonType="primary" onClick={f}>Neste</Button>
+        </GameOverLayout>);
+      }
 
-    return (
-      <MenuLayout>
-        <div id="game"/>
-        <Button id="myBtn" buttonType="primary" onClick={startGame}>Neste</Button>
-
-      </MenuLayout>
-    )
   }
-
 }
 
 

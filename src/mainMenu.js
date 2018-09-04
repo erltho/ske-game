@@ -12,10 +12,10 @@ function loadMainMenu() {
   localStorage.setItem("reactionGameScore", 0);
   localStorage.setItem("sideScrollerScore", 0);
   localStorage.setItem("totalScore", 0);
+  console.log(localStorage.scoreBoard);
 
   if (localStorage.getItem("scoreBoard") === null) {
     localStorage.setItem("scoreBoard", "[]");
-    console.log(localStorage.scoreBoard);
   }
 
   plotHigh();

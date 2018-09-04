@@ -10,6 +10,7 @@ import {updateGameAreaWithRng} from './game/updateGameArea'
 import Component from './game/component';
 import flyingSprite from './assets/img/game_three/SuperSprite.png';
 import opponent from './assets/img/game_three/Skurk_px.png';
+import {loadMainMenu, inputValidator} from './mainMenu'
 
 // Canvas
 const CANVAS_WIDTH = 1000; // Default 800
@@ -54,35 +55,35 @@ function createDefaultGameElements() {
   return {
     // Game 1
     gameOneGubbeSprite: new Component(GUBBE_SPRITE_WIDTH, GUBBE_SPRITE_HEIGHT, gubbeSpriteSheet, 0, CANVAS_HEIGHT - GUBBE_SPRITE_HEIGHT, "sprite", {numberOfFrames: 4}),
-    gameOneBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0,0),
+    gameOneBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0, 0),
     gameOneTextBubble: new Component(CANVAS_WIDTH - (BUTTON_DIST_FROM_Y_EDGE * 2) - BUTTON_RADIUS, BUTTON_HEIGHT, BUTTON_COLOR, BUTTON_DIST_FROM_Y_EDGE, BUTTON_DIST_FROM_X_EDGE, "button", {radius: BUTTON_RADIUS}),
-    gameOneButtonText: new Component(30, "Georgia", "black", CANVAS_WIDTH / 2 , 82, "text", {textAlign: "center"}),
+    gameOneButtonText: new Component(30, "Georgia", "black", CANVAS_WIDTH / 2, 82, "text", {textAlign: "center"}),
     gameOneScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
     gameOneScoreText: new Component(60, "Georgia", "#f4f4f4", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
     gameOneCountDownTimer: new Component(30, "Georgia", "black", 650, 350, "text", {textAlign: "left"}),
     gameOneHourglass: new Component(80, 80, hourglass, 600, 300, "image"),
     gameOneFace: new Component(55, 55, face, 207, 310, "image"),
     gameOneEasterEgg: new Component(10, 30, rock, 207, 420, "image"),
-    gameOneHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0,50, "rect", {transparency: 0.9}),
-    gameOneHelpTextLineOne: new Component("30", "Georgia", "black",CANVAS_WIDTH /2 , 80, "text", {textAlign: "center"}),
-    gameOneHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 110, "text", {textAlign: "center"}),
-    gameOneHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 140, "text", {textAlign: "center"}),
-    gameOneHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 170, "text", {textAlign: "center"}),
-    gameOneHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 200, "text", {textAlign: "center"}),
+    gameOneHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0, 50, "rect", {transparency: 0.9}),
+    gameOneHelpTextLineOne: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 80, "text", {textAlign: "center"}),
+    gameOneHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 110, "text", {textAlign: "center"}),
+    gameOneHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 140, "text", {textAlign: "center"}),
+    gameOneHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 170, "text", {textAlign: "center"}),
+    gameOneHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 200, "text", {textAlign: "center"}),
     gameOneHelpTextLineSix: new Component("30", "Georgia", "black", CANVAS_WIDTH - 30, CANVAS_HEIGHT - 270, "text", {textAlign: "right"}),
 
     // Game 2
-    gameTwoBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0,0),
+    gameTwoBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT, '#CDB7BA', 0, 0),
     gameTwoGubbeSprite: new Component(916, 333, gubbeReactionSheet, 0, CANVAS_HEIGHT - 333, "sprite", {numberOfFrames: 2}),
     gameTwoKassaSprite: new Component(648, 352, kassaReactionSheet, 297, CANVAS_HEIGHT - 333 /* 460 */, "sprite", {numberOfFrames: 4}),
     gameTwoScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
     gameTwoTextBubble: new Component(CANVAS_WIDTH - (BUTTON_DIST_FROM_Y_EDGE * 2) - BUTTON_RADIUS, BUTTON_HEIGHT, BUTTON_COLOR, BUTTON_DIST_FROM_Y_EDGE, BUTTON_DIST_FROM_X_EDGE, "button", {radius: BUTTON_RADIUS}),
-    gameTwoHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0,50, "rect", {transparency: 0.9}),
-    gameTwoHelpTextLineOne: new Component("30", "Georgia", "black",CANVAS_WIDTH /2 , 80, "text", {textAlign: "center"}),
-    gameTwoHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 110, "text", {textAlign: "center"}),
-    gameTwoHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 140, "text", {textAlign: "center"}),
-    gameTwoHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 170, "text", {textAlign: "center"}),
-    gameTwoHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 200, "text", {textAlign: "center"}),
+    gameTwoHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0, 50, "rect", {transparency: 0.9}),
+    gameTwoHelpTextLineOne: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 80, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 110, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 140, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 170, "text", {textAlign: "center"}),
+    gameTwoHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 200, "text", {textAlign: "center"}),
     gameTwoHelpTextLineSix: new Component("30", "Georgia", "black", CANVAS_WIDTH - 30, CANVAS_HEIGHT - 270, "text", {textAlign: "right"}),
 
     // Game 3
@@ -94,77 +95,87 @@ function createDefaultGameElements() {
     myScore: new Component("30", "Georgia", "black", 280, 40, "text", {textAlign: "left"}),
     myScoreBackground: new Component(CANVAS_WIDTH - (GUBBE_SPRITE_WIDTH / 4), 108, "#999999", GUBBE_SPRITE_WIDTH / 4, CANVAS_HEIGHT - 108, "rect", {transparency: 0.4}),
     myScoreText: new Component(60, "Georgia", "#f4f4f4", (GUBBE_SPRITE_WIDTH / 4) + 20, CANVAS_HEIGHT - 30, "text", {textAlign: "left"}),
-    myOpponentPiece: new Component(OPPONENT_WIDTH, OPPONENT_HEIGHT, opponent , CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent"),
-    myGameHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0,50, "rect", {transparency: 0.9}),
-    myGameHelpTextLineOne: new Component("30", "Georgia", "black",CANVAS_WIDTH /2 , 80, "text", {textAlign: "center"}),
-    myGameHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 110, "text", {textAlign: "center"}),
-    myGameHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 140, "text", {textAlign: "center"}),
-    myGameHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 170, "text", {textAlign: "center"}),
-    myGameHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 200, "text", {textAlign: "center"}),
+    myOpponentPiece: new Component(OPPONENT_WIDTH, OPPONENT_HEIGHT, opponent, CANVAS_WIDTH - OPPONENT_WIDTH - OPPONENT_DIST_FROM_R_EDGE, OPPONENT_START_Y, "opponent"),
+    myGameHelpTextBackground: new Component(CANVAS_WIDTH, CANVAS_HEIGHT - 300, "#ffffff", 0, 50, "rect", {transparency: 0.9}),
+    myGameHelpTextLineOne: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 80, "text", {textAlign: "center"}),
+    myGameHelpTextLineTwo: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 110, "text", {textAlign: "center"}),
+    myGameHelpTextLineThree: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 140, "text", {textAlign: "center"}),
+    myGameHelpTextLineFour: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 170, "text", {textAlign: "center"}),
+    myGameHelpTextLineFive: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 200, "text", {textAlign: "center"}),
     myGameHelpTextLineSix: new Component("30", "Georgia", "black", CANVAS_WIDTH - 30, CANVAS_HEIGHT - 270, "text", {textAlign: "right"}),
-    myGameHelpTextLineSeven: new Component("30", "Georgia", "black", CANVAS_WIDTH /2, 230, "text", {textAlign: "center"}),
+    myGameHelpTextLineSeven: new Component("30", "Georgia", "black", CANVAS_WIDTH / 2, 230, "text", {textAlign: "center"}),
     myPlayerPiece: new Component(80, 30, flyingSprite, PLAYER_START_X, PLAYER_START_Y, "sprite", {numberOfFrames: 2})
   }
 }
 
-function startGame() {
-  // Replace ske-layout__body with canvas
+function startGame(endGameFun) {
+console.log("foo");
+
+  return function () {
+    console.log("bar");
+    //endGameFun();
+
+    // Replace ske-layout__body with canvas
 
 
-  let element = document.getElementById("ske-layout__body");
-  let firstGameStart = true;
-  gameType += 1;
+    let element = document.getElementById("ske-layout__body");
+    let firstGameStart = true;
+    gameType += 1;
 
-  if (gameType === 4) {
-    console.log(gameType);
-    let canvas = document.getElementById("gameCanvas");
-    if (typeof(canvas) !== 'undefined' && canvas !== null) {
-      canvas.parentNode.removeChild(canvas);
-      myGameArea.stop();
-      myGameArea.clear();
-      myGameArea.keys = [];
-      firstGameStart = false;
+    if (gameType === 4) {
+
+      endGameFun();
+      console.log(gameType);
+      let canvas = document.getElementById("gameCanvas");
+      if (typeof(canvas) !== 'undefined' && canvas !== null) {
+        canvas.parentNode.removeChild(canvas);
+        myGameArea.stop();
+        myGameArea.clear();
+        myGameArea.keys = [];
+        firstGameStart = false;
+
+
+        let name = localStorage.getItem("BrukersNavn");
+        let number = localStorage.getItem("BrukersNummer");
+        let totalScore = localStorage.getItem("totalScore");
+
+        let scoreArray = JSON.parse(localStorage.scoreBoard);
+        let objPush = {"navn": name, "nummer": number, "totalScore": totalScore};
+        scoreArray.push(objPush);
+        localStorage.scoreBoard = JSON.stringify(scoreArray);
+
+        loadMainMenu();
+      }
+
+
+    } else {
+
+      console.log(gameType);
+      if (typeof(element) !== 'undefined' && element !== null) {
+
+        let user = document.getElementById("nameField").value;
+        localStorage.setItem("BrukersNavn", user);
+        let tlfNumber = document.getElementById("numberField").value;
+        localStorage.setItem("BrukersNummer", tlfNumber);
+
+        element.parentNode.removeChild(element);
+      }
+
+      let canvas = document.getElementById("gameCanvas");
+
+      if (typeof(canvas) !== 'undefined' && canvas !== null) {
+        canvas.parentNode.removeChild(canvas);
+        myGameArea.stop();
+        myGameArea.clear();
+        myGameArea.keys = [];
+        firstGameStart = false;
+      }
+
+
+      // start game
+      let prng = new MersenneTwister(1337);
+      myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
     }
-
-
-  } else {
-
-    console.log(gameType);
-    if (typeof(element) !== 'undefined' && element !== null) {
-
-      let user = document.getElementById("nameField").value;
-      localStorage.setItem("BrukersNavn", user);
-      let tlfNumber = document.getElementById("numberField").value;
-      localStorage.setItem("BrukersNummer", tlfNumber);
-
-      element.parentNode.removeChild(element);
-    }
-
-    let canvas = document.getElementById("gameCanvas");
-
-    if (gameType === 1) {
-
-      let name = localStorage.getItem("BrukersNavn");
-      let number = localStorage.getItem("BrukersNummer");
-
-      let scoreArray = JSON.parse(localStorage.scoreBoard);
-      let objPush = {"navn": name, "nummer": number};
-      scoreArray.push(objPush);
-      localStorage.scoreBoard = JSON.stringify(scoreArray);
-    }
-
-    if (typeof(canvas) !== 'undefined' && canvas !== null) {
-      canvas.parentNode.removeChild(canvas);
-      myGameArea.stop();
-      myGameArea.clear();
-      myGameArea.keys = [];
-      firstGameStart = false;
-    }
-
-
-    // start game
-    let prng = new MersenneTwister(1337);
-    myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
   }
 }
 
@@ -181,6 +192,13 @@ function restart() {
 let myGameArea = {
   canvas: document.createElement("canvas"),
   start: function (gameElements, prng, gameType, firstGameStart) {
+    let str;
+    let element = navigator.getGamepads()[0];
+    if (element != null) {
+      str = element.connected;
+    } else {
+      str = false;
+    }
     document.getElementById("myBtn").disabled = true;
     this.canvas.width = CANVAS_WIDTH;
     this.canvas.height = CANVAS_HEIGHT;
@@ -200,8 +218,7 @@ let myGameArea = {
     this.dropScore = 0;
     this.interval = setInterval(updateGameAreaWithRng(this, gameElements, prng, gameType), FRAME_SPEED_IN_MS);
     this.keys = (this.keys || []);
-    this.gamepadConnected = (this.gamepadConnected || navigator.getGamepads()[0].connected ||false);
-    console.log(this.gamepadConnected);
+    this.gamepadConnected = (this.gamepadConnected || str || false);
 
     if (firstGameStart === true) {
 
@@ -210,7 +227,7 @@ let myGameArea = {
           console.log(e.key);
           e.preventDefault();
         }
-          this.keys[e.key] = (e.type === "keydown");
+        this.keys[e.key] = (e.type === "keydown");
       });
 
 

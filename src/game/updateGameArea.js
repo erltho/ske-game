@@ -107,7 +107,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
 
     // Collision between player and obstacle
     if (myPlayerPiece.interactWith(myObstacles[i])) {
-      localStorage.setItem("sideScrollerScore", score.get());
+      localStorage.setItem("totalScore", score.get());
       myGameArea.stop();
     }
 
@@ -336,7 +336,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myScoreText.update(myGameArea);
 
     if (myGameArea.options === 2) {
-      localStorage.setItem("sideScrollerScore", score.get());
+      localStorage.setItem("totalScore", score.get());
       myGameArea.stop();
     }
   }
