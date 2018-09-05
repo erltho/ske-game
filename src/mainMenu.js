@@ -10,11 +10,14 @@ function loadMainMenu() {
   localStorage.setItem("BrukersNummer", "");
   localStorage.setItem("buttonMashScore", 0);
   localStorage.setItem("reactionGameScore", 0);
+  localStorage.setItem("sideScrollerScore", 0);
+  localStorage.setItem("trykk", 0);
+  localStorage.setItem("reaksjon", 0);
+  localStorage.setItem("fangetTyv", 0);
   localStorage.setItem("totalScore", 0);
 
   if (localStorage.getItem("scoreBoard") === null) {
     localStorage.setItem("scoreBoard", "[]");
-    console.log(localStorage.scoreBoard);
   }
 
   plotHigh();

@@ -9,14 +9,19 @@ const OBSTACLE_DISTANCE_VARIETY_FACTOR = 30; // Default 30
 // Game-pieces
 function Component(width, height, color, x, y, type, options) {
   this.type = type;
-  if (type === "image" || type === "background" || type === "sprite") {
+  if (type === "image" || type === "background" || type === "sprite" || type === "opponent") {
     this.image = new Image();
     this.image.src = color;
+    if (typeof options !== "undefined") {
+      if (typeof options.direction !== "undefined") {
+        this.direction = options.direction;
+      }
+    }
   } else {
     this.color = color;
   }
   if (type === "sprite") {
-    this.frame = 3;
+    this.frame = 0;
   }
   this.width = width;
   this.height = height;
@@ -26,6 +31,7 @@ function Component(width, height, color, x, y, type, options) {
   this.growthH =0;
   this.x = x;
   this.y = y;
+  this.desiredPosition = 0;
 
 
   // Draw different components
@@ -38,7 +44,7 @@ function Component(width, height, color, x, y, type, options) {
       ctx.fillText(this.text, this.x, this.y);
     }
     // Images and background
-    else if (type === "image" || type === "background") {
+    else if (type === "image" || type === "background" || type === "opponent") {
       ctx.drawImage(this.image,
         this.x,
         this.y,
@@ -82,7 +88,6 @@ function Component(width, height, color, x, y, type, options) {
       ctx.fillStyle = color;
       ctx.fill();
     }
-
     // Draws rectangles
     else {
       ctx.globalAlpha = 1;
@@ -91,7 +96,7 @@ function Component(width, height, color, x, y, type, options) {
            ctx.globalAlpha = options.transparency;
          }
       }
-      ctx.fillStyle = color;
+      ctx.fillStyle = this.color;
       ctx.fillRect(this.x, this.y, this.width, this.height);
       ctx.globalAlpha = 1;
     }
@@ -122,6 +127,9 @@ function Component(width, height, color, x, y, type, options) {
       myRight = this.x + OBSTACLE_MIN_DISTANCE - OBSTACLE_WIDTH - OBSTACLE_DISTANCE_VARIETY_FACTOR;
       myBottom = this.y + (this.height) + (OBSTACLE_MIN_GAP / 10);
       myTop = this.y - (OBSTACLE_MIN_GAP / 10);
+    }
+    if (type === "sprite") {
+      myRight = this.x + (this.width / options.numberOfFrames);
     }
     let otherLeft = otherobj.x;
     let otherRight = otherobj.x + (otherobj.width);

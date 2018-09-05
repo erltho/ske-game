@@ -11,7 +11,12 @@ w3schools - https://www.w3schools.com for tutorials and examples
 Co-workers:  
 Espen S  
 Marie A  
-Bent Andre S
+Bent Andre S  
+Luan T  
+Bjarte K  
+Jarle H  
+Lykke Renee S  
+Marte G
 
 **Pseudo random number generator**  
 Mersenne-Twist - https://gist.github.com/banksean/300494  
@@ -23,3 +28,10 @@ Pixel Art for background created by Vicente Nitti (@vnitti)
 Twitter:   https://twitter.com/vnitti_art  
 Itch.io:   https://vnitti.itch.io/  
 Portfolio: https://vnitti.wixsite.com/site
+
+"BACKGROUND" (Blue skies and clouds)  
+James Cho  
+http://www.kilobolt.com/day-5-background-and-sprites
+
+**Graphics**  
+Thor Egil H
