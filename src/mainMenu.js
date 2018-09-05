@@ -11,8 +11,10 @@ function loadMainMenu() {
   localStorage.setItem("buttonMashScore", 0);
   localStorage.setItem("reactionGameScore", 0);
   localStorage.setItem("sideScrollerScore", 0);
+  localStorage.setItem("trykk", 0);
+  localStorage.setItem("reaksjon", 0);
+  localStorage.setItem("fangetTyv", 0);
   localStorage.setItem("totalScore", 0);
-  console.log(localStorage.scoreBoard);
 
   if (localStorage.getItem("scoreBoard") === null) {
     localStorage.setItem("scoreBoard", "[]");

@@ -3,8 +3,7 @@ import TopBanner from 'aurora-frontend-react-komponenter/TopBanner';
 import FooterContent from 'aurora-frontend-react-komponenter/FooterContent';
 import Grid from 'aurora-frontend-react-komponenter/Grid';
 
-const MenuLayout = ({children, endGameFun}) => {
-  //endGameFun();
+const MenuLayout = ({children}) => {
   return (
     <div>
       <TopBanner
@@ -84,6 +83,7 @@ const GameOverLayout = ({children}) => (
             <img src={require("./assets/img/2017/DinScore.png")} height="" className="imgCenter"/>
             <h3 className="simpleText" id="antallTrykk">0</h3>
             <h3 className="simpleText" id="reaksjon">0</h3>
+            <h3 className="simpleText" id="fly">0</h3>
             <h1 className="totalScoreText" id="totalS">0</h1>
             <div className="myScore scoreList"></div>
           </div>

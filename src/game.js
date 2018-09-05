@@ -108,7 +108,7 @@ function createDefaultGameElements() {
   }
 }
 
-function startGame(endGameFun) {
+function startGame(endGameFun, newGameFun) {
 console.log("foo");
 
   return function () {
@@ -117,14 +117,16 @@ console.log("foo");
 
     // Replace ske-layout__body with canvas
 
+    if (gameType === -1){
+      console.log("ny funksjon");
+      newGameFun();
+    }
 
     let element = document.getElementById("ske-layout__body");
     let firstGameStart = true;
     gameType += 1;
 
     if (gameType === 4) {
-
-      endGameFun();
       console.log(gameType);
       let canvas = document.getElementById("gameCanvas");
       if (typeof(canvas) !== 'undefined' && canvas !== null) {
@@ -143,13 +145,14 @@ console.log("foo");
         let objPush = {"navn": name, "nummer": number, "totalScore": totalScore};
         scoreArray.push(objPush);
         localStorage.scoreBoard = JSON.stringify(scoreArray);
-
-        loadMainMenu();
+        gameType = -1;
+        endGameFun();
       }
 
 
-    } else {
+    }
 
+      if (gameType > 0 && gameType < 4) {
       console.log(gameType);
       if (typeof(element) !== 'undefined' && element !== null) {
 
@@ -224,7 +227,7 @@ let myGameArea = {
 
       window.addEventListener('keydown', (e) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
-          console.log(e.key);
+          //console.log(e.key);
           e.preventDefault();
         }
         this.keys[e.key] = (e.type === "keydown");

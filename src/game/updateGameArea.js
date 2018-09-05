@@ -337,6 +337,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
 
     if (myGameArea.options === 2) {
       localStorage.setItem("totalScore", score.get());
+      localStorage.setItem("fangetTyv", 1);
       myGameArea.stop();
     }
   }
@@ -486,6 +487,7 @@ function gameOne(myGameArea, gameElements) {
     }
   } else {
     gameOneGubbeSprite.frame = 3;
+    localStorage.setItem("trykk", myGameArea.counter);
     gameOneButtonText.text = "Du klarte " + myGameArea.counter + " trykk på 10 sekunder";
   }
 
@@ -641,7 +643,9 @@ function gameTwo(myGameArea, gameElements) {
 
     if (myGameArea.options === 3) {
       myGameArea.options = 4;
-      gameOneButtonText.text = "Du brukte " + (myGameArea.frameNo * 1000) * 0.015 + "ms på å stoppe lekkasjen";
+      let reactionTime = (myGameArea.frameNo * 1000) * 0.015;
+      localStorage.setItem("reaksjon", reactionTime);
+      gameOneButtonText.text = "Du brukte " + reactionTime + "ms på å stoppe lekkasjen";
       gameTwoGubbeSprite.frame = 0;
       gameTwoBackground.color = "#CDB7BA";
       localStorage.setItem("reactionGameScore", score.get());

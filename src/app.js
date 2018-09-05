@@ -5,6 +5,7 @@ import SkeBasis from 'aurora-frontend-react-komponenter/SkeBasis';
 import Button from 'aurora-frontend-react-komponenter/Button';
 import {MenuLayout, GameOverLayout} from './layout'
 import {loadMainMenu, inputValidator} from './mainMenu'
+import loadTotalScore from './totalScore'
 
 import './index.css'
 
@@ -17,6 +18,7 @@ class MainMenu extends React.Component {
       gameEnded: false
     };
     this.endGame = this.endGame.bind(this);
+    this.newGame = this.newGame.bind(this);
   }
 
 
@@ -52,25 +54,39 @@ class MainMenu extends React.Component {
     });
   }
 
+
+  componentDidUpdate(prevProps) {
+
+    if (this.state.gameEnded) {
+      loadTotalScore();
+      console.log("Total score loaded");
+    } else {
+      loadMainMenu();
+    }
+  }
+
+
   componentWillUnmount() {
     clearInterval(this.timerID);
   }
 
+
   endGame() {
-    console.log("endGame" +  this.endGame);
     this.setState(
       Object.assign(
         this.state,
         {gameEnded: true}
         )
     );
-  //   this.setState(
-  //     {
-  //       ...this.state,
-  //       gameEnded: true
-  //      }
-  //     )
-  // ;
+  }
+
+  newGame() {
+    this.setState(
+      Object.assign(
+        this.state,
+        {gameEnded: false}
+      )
+    );
   }
 
 
@@ -87,8 +103,8 @@ class MainMenu extends React.Component {
 
 
   render() {
-    console.log("render" +  this.endGame);
-var f = startGame(this.endGame);
+    console.log("render");
+var f = startGame(this.endGame, this.newGame);
       if(! this.state.gameEnded) {
         return (<MenuLayout endGameFun={this.endGame}>
           <div id="game"/>
