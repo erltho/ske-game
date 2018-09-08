@@ -11,6 +11,11 @@ import Component from './game/component';
 import flyingSprite from './assets/img/game_three/SuperSprite.png';
 import opponent from './assets/img/game_three/Skurk_px.png';
 import {loadMainMenu, inputValidator} from './mainMenu'
+import _ from 'underscore';
+import jQuery from "jquery";
+
+
+window.$ = window.jQuery = jQuery;
 
 // Canvas
 const CANVAS_WIDTH = 1000; // Default 800
@@ -108,77 +113,115 @@ function createDefaultGameElements() {
   }
 }
 
-function startGame(endGameFun, newGameFun) {
-console.log("foo");
-
+function checkInput(endGameFun, newGameFun) {
+  console.log("foo");
   return function () {
-    console.log("bar");
-    //endGameFun();
+    let canvas = document.getElementById("gameCanvas");
+    let end = document.getElementById("fly");
 
-    // Replace ske-layout__body with canvas
+    if (typeof(canvas) !== 'undefined' && canvas !== null) {
 
-    if (gameType === -1){
-      console.log("ny funksjon");
-      newGameFun();
+      startGame(endGameFun, newGameFun)
+    } else if (typeof(end) !== 'undefined' && end !== null) {
+      startGame(endGameFun, newGameFun)
+
+    } else {
+      console.log("bar");
+      let scores1 = JSON.parse(localStorage.scoreBoard);
+      let numberField = document.getElementById('numberField').value;
+      let validerNummer = _.where(scores1, {nummer: numberField});
+
+
+      let myLength = $("#nameField").val().length;
+      let nameInput = document.getElementById('strError');
+      let navntxt = "Dette er ikke et gyldig navn";
+
+      if (myLength < 1) {
+        nameInput.textContent = navntxt;
+        document.getElementById("nameField").style.borderColor = "red";
+      } else if (validerNummer.length === 0) {
+        startGame(endGameFun, newGameFun)
+      } else {
+        let nummerNotValid = "Dette nummeret er allerede registrert";
+        let numberInput = document.getElementById('nrError');
+        numberInput.textContent = nummerNotValid;
+        document.getElementById("numberField").style.borderColor = "red";
+        //alert("Telefonnummeret er allerede registrert");
+      }
+    }
+  }
+}
+
+
+function startGame(endGameFun, newGameFun) {
+
+  //console.log("bar");
+  //endGameFun();
+
+  // Replace ske-layout__body with canvas
+
+  if (gameType === -1) {
+    //console.log("ny funksjon");
+    newGameFun();
+  }
+
+  let element = document.getElementById("ske-layout__body");
+  let firstGameStart = true;
+  gameType += 1;
+
+  if (gameType === 4) {
+    console.log(gameType);
+    let canvas = document.getElementById("gameCanvas");
+    if (typeof(canvas) !== 'undefined' && canvas !== null) {
+      canvas.parentNode.removeChild(canvas);
+      myGameArea.stop();
+      myGameArea.clear();
+      myGameArea.keys = [];
+      firstGameStart = false;
+
+
+      let name = localStorage.getItem("BrukersNavn");
+      let number = localStorage.getItem("BrukersNummer");
+      let totalScore = localStorage.getItem("totalScore");
+
+      let scoreArray = JSON.parse(localStorage.scoreBoard);
+      let objPush = {"navn": name, "nummer": number, "totalScore": totalScore};
+      scoreArray.push(objPush);
+      localStorage.scoreBoard = JSON.stringify(scoreArray);
+      gameType = -1;
+      endGameFun();
+
     }
 
-    let element = document.getElementById("ske-layout__body");
-    let firstGameStart = true;
-    gameType += 1;
 
-    if (gameType === 4) {
-      console.log(gameType);
-      let canvas = document.getElementById("gameCanvas");
-      if (typeof(canvas) !== 'undefined' && canvas !== null) {
-        canvas.parentNode.removeChild(canvas);
-        myGameArea.stop();
-        myGameArea.clear();
-        myGameArea.keys = [];
-        firstGameStart = false;
+  }
 
+  if (gameType > 0 && gameType < 4) {
+    console.log(gameType);
+    if (typeof(element) !== 'undefined' && element !== null) {
 
-        let name = localStorage.getItem("BrukersNavn");
-        let number = localStorage.getItem("BrukersNummer");
-        let totalScore = localStorage.getItem("totalScore");
+      let user = document.getElementById("nameField").value;
+      localStorage.setItem("BrukersNavn", user);
+      let tlfNumber = document.getElementById("numberField").value;
+      localStorage.setItem("BrukersNummer", tlfNumber);
 
-        let scoreArray = JSON.parse(localStorage.scoreBoard);
-        let objPush = {"navn": name, "nummer": number, "totalScore": totalScore};
-        scoreArray.push(objPush);
-        localStorage.scoreBoard = JSON.stringify(scoreArray);
-        gameType = -1;
-        endGameFun();
-      }
-
-
+      element.parentNode.removeChild(element);
     }
 
-      if (gameType > 0 && gameType < 4) {
-      console.log(gameType);
-      if (typeof(element) !== 'undefined' && element !== null) {
+    let canvas = document.getElementById("gameCanvas");
 
-        let user = document.getElementById("nameField").value;
-        localStorage.setItem("BrukersNavn", user);
-        let tlfNumber = document.getElementById("numberField").value;
-        localStorage.setItem("BrukersNummer", tlfNumber);
-
-        element.parentNode.removeChild(element);
-      }
-
-      let canvas = document.getElementById("gameCanvas");
-
-      if (typeof(canvas) !== 'undefined' && canvas !== null) {
-        canvas.parentNode.removeChild(canvas);
-        myGameArea.stop();
-        myGameArea.clear();
-        myGameArea.keys = [];
-        firstGameStart = false;
-      }
-
-
-      // start game
-      let prng = new MersenneTwister(1337);
-      myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
+    if (typeof(canvas) !== 'undefined' && canvas !== null) {
+      canvas.parentNode.removeChild(canvas);
+      myGameArea.stop();
+      myGameArea.clear();
+      myGameArea.keys = [];
+      firstGameStart = false;
     }
+
+
+    // start game
+    let prng = new MersenneTwister(1337);
+    myGameArea.start(createDefaultGameElements(), prng, gameType, firstGameStart);
   }
 }
 
@@ -213,7 +256,7 @@ let myGameArea = {
     this.frameNo = 0;
     this.firstClick = true;
     this.readyToFire = true;
-    this.countDownTimer = 1; // Default 10
+    this.countDownTimer = 10; // Default 10
     this.counter = 0;
     this.reactTime = 0;
     this.options = 0;
@@ -226,7 +269,7 @@ let myGameArea = {
     if (firstGameStart === true) {
 
       window.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") {
           //console.log(e.key);
           e.preventDefault();
         }
@@ -238,13 +281,15 @@ let myGameArea = {
         this.keys[e.key] = (e.type === "keydown");
       });
     }
+
     window.addEventListener('gamepadconnected', (e) => {
-      console.log("Trouble");
+      //console.log("Trouble");
       this.gamepadConnected = e.gamepad.connected;
-      console.log(e.gamepad.connected);
-      console.log(e);
+      //console.log(e.gamepad.connected);
+      //console.log(e);
       window.connectedEvent = e;
     });
+
   },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -258,5 +303,6 @@ let myGameArea = {
 
 export {
   startGame,
-  restart
+  restart,
+  checkInput
 }

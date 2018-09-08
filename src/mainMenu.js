@@ -2,7 +2,6 @@ import _ from 'underscore';
 import jQuery from "jquery";
 
 
-
 window.$ = window.jQuery = jQuery;
 
 function loadMainMenu() {
@@ -14,18 +13,40 @@ function loadMainMenu() {
   localStorage.setItem("trykk", 0);
   localStorage.setItem("reaksjon", 0);
   localStorage.setItem("fangetTyv", 0);
+  localStorage.setItem("spagetti", 0);
   localStorage.setItem("totalScore", 0);
+
+  $('#myBtn').prop("disabled", true);
+  $("#numberField").keyup(function () {
+    let numberInput = document.getElementById('nrError');
+    numberInput.textContent = "";
+    document.getElementById("numberField").style.borderColor = "grey";
+    if ($(this).val().length === 8 && $(this).val().match(/^\d+$/))
+      $('#myBtn').prop('disabled', false);
+    else
+      $('#myBtn').prop('disabled', true);
+
+
+  });
+  $("#nameField").keyup(function () {
+    let nameInput = document.getElementById('strError');
+    nameInput.textContent = "";
+    document.getElementById("nameField").style.borderColor = "grey";
+  });
 
   if (localStorage.getItem("scoreBoard") === null) {
     localStorage.setItem("scoreBoard", "[]");
   }
-
   plotHigh();
+
 }
 
 function inputValidator() {
+
+
   var nameField = document.getElementById('nameField').value;
   var numberField = document.getElementById('numberField').value;
+
 
   var nameInput = document.getElementById('strError');
   var numberInput = document.getElementById('nrError');
@@ -46,7 +67,6 @@ function inputValidator() {
   if (nameField.match(strRegex) && numberField.match(numRegex) && validerNummer.length === 0) {
     localStorage.setItem("BrukersNavn", nameField);
     localStorage.setItem("BrukersNummer", numberField);
-    window.location.replace('buttonMash.html');
   }
 
   if (!nameField.match(strRegex)) {
@@ -67,36 +87,13 @@ function inputValidator() {
     numberInput.textContent = "";
     document.getElementById("numberField").style.borderColor = "grey";
   }
-}
-
-function getUserName() {
-  var nameField = document.getElementById('nameField').value;
-  var navnResultat = document.getElementById('navnResultat');
-  console.log(nameField);
-
-  if (nameField.length < 0) {
-    navnResultat.textContent = 'Navnet ditt må bestå av minst 3 bokstaver';
-
-  } else {
-    localStorage.setItem("BrukersNavn", nameField);
-
-  }
-}
-
-function getNumber() {
-  var numberField = document.getElementById('numberField').value;
-  var nummerResultat = document.getElementById('nummerResultat');
-  console.log(numberField);
-
-  localStorage.setItem("BrukersNummer", numberField);
 
 }
 
-var subButton = document.getElementById('subButton');
 
 function plotHigh() {
   var scores = JSON.parse(localStorage.scoreBoard);
-  var scores =  _.sortBy(scores, function (o) {
+  scores = _.sortBy(scores, function (o) {
     return parseInt(o.totalScore);
   }).reverse();
 
@@ -106,7 +103,7 @@ function plotHigh() {
       class: 'myRow lineHS' + i
     }));
 
-    if (i % 2 == 0) {
+    if (i % 2 === 0) {
       $('.lineHS' + i).css('background-color', '#e8d6dc');
     }
 
@@ -117,9 +114,9 @@ function plotHigh() {
       if (scores[i] == null) {
         str = "--"
       } else {
-        if (j == 0) {
+        if (j === 0) {
           str = i + 1;
-        } else if (j == 1) {
+        } else if (j === 1) {
           str = scores[i].navn;
         } else {
           str = scores[i].totalScore;
@@ -133,6 +130,7 @@ function plotHigh() {
     }
   }
 }
+
 
 export {
   loadMainMenu,

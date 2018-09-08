@@ -30,9 +30,8 @@ const MenuLayout = ({children}) => {
                   </ul>
                 </div>
                 <div style={{position: 'relative'}} className="errorMsg">
-                  <div id="strError" className="errorMsgBlock" style={{color: "red"}}></div>
-                  <div style={{bottom: "0", position: "absolute", color: "red"}} id="nrError"
-                       className="errorMsgBlock"></div>
+                  <div id="strError" className="errorMsgBlock" style={{color: "red"}}> </div>
+                  <div id="nrError" style={{color: "red"}} className="errorMsgBlock"> </div>
                 </div>
               </form>
               <div id={'gubbediv'}

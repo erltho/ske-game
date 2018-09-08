@@ -1,11 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {startGame, restart} from './game'
+import {startGame, restart, checkInput} from './game'
 import SkeBasis from 'aurora-frontend-react-komponenter/SkeBasis';
 import Button from 'aurora-frontend-react-komponenter/Button';
 import {MenuLayout, GameOverLayout} from './layout'
 import {loadMainMenu, inputValidator} from './mainMenu'
 import loadTotalScore from './totalScore'
+import _ from 'underscore';
+import jQuery from "jquery";
+
+
+window.$ = window.jQuery = jQuery;
 
 import './index.css'
 
@@ -22,8 +27,6 @@ class MainMenu extends React.Component {
   }
 
 
-
-
   componentDidMount() {
 
     this.timerID = setInterval(
@@ -31,7 +34,6 @@ class MainMenu extends React.Component {
       50
     );
 
-    loadMainMenu();
     window.addEventListener("keyup", function (event) {
       event.preventDefault();
       if (event.key === "Enter") {
@@ -52,16 +54,34 @@ class MainMenu extends React.Component {
       console.log(e);
       window.connectedEvent = e;
     });
+
+    /*
+    if ($(".myRow lineHS2")[0]) {
+      console.log("ku-melk")
+    } else {
+      loadMainMenu();
+    }
+*/
+    loadMainMenu();
+
   }
 
 
   componentDidUpdate(prevProps) {
 
+
     if (this.state.gameEnded) {
       loadTotalScore();
       console.log("Total score loaded");
-    } else {
+      document.getElementById("myBtn").disabled = true;
+      setTimeout(() => document.getElementById("myBtn").disabled = false, 2000);
+    } else if (!this.state.gameEnded) {
       loadMainMenu();
+      document.getElementById("myBtn").disabled = true;
+      console.log("componentDidUpdate main menu ");
+
+    } else {
+      console.log("component did update");
     }
   }
 
@@ -76,7 +96,7 @@ class MainMenu extends React.Component {
       Object.assign(
         this.state,
         {gameEnded: true}
-        )
+      )
     );
   }
 
@@ -91,7 +111,7 @@ class MainMenu extends React.Component {
 
 
   tick() {
-    if (this.state.gamepadConnected === true){
+    if (this.state.gamepadConnected === true) {
       let gamepad = navigator.getGamepads()[0];
       let button2 = gamepad.buttons[1];
       if (button2.value === 1) {
@@ -101,21 +121,20 @@ class MainMenu extends React.Component {
   }
 
 
-
   render() {
     console.log("render");
-var f = startGame(this.endGame, this.newGame);
-      if(! this.state.gameEnded) {
-        return (<MenuLayout endGameFun={this.endGame}>
-          <div id="game"/>
-          <Button id="myBtn" buttonType="primary" onClick={f}>Neste</Button>
-        </MenuLayout>);
-      } else {
-        return (<GameOverLayout>
-          <div id="game"/>
-          <Button id="myBtn" buttonType="primary" onClick={f}>Neste</Button>
-        </GameOverLayout>);
-      }
+    var f = checkInput(this.endGame, this.newGame);
+    if (!this.state.gameEnded) {
+      return (<MenuLayout endGameFun={this.endGame}>
+        <div id="game"/>
+        <Button id="myBtn" buttonType="primary" onClick={f}>Neste</Button>
+      </MenuLayout>);
+    } else {
+      return (<GameOverLayout>
+        <div id="game"/>
+        <Button id="myBtn" buttonType="primary" onClick={f}>Neste</Button>
+      </GameOverLayout>);
+    }
 
   }
 }

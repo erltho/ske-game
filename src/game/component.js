@@ -129,7 +129,10 @@ function Component(width, height, color, x, y, type, options) {
       myTop = this.y - (OBSTACLE_MIN_GAP / 10);
     }
     if (type === "sprite") {
-      myRight = this.x + (this.width / options.numberOfFrames);
+      myRight = this.x + (this.width / options.numberOfFrames) - 1;
+      myTop = this.y + 5;
+      myLeft = this.x + 1;
+      myBottom = this.y + (this.height) - 4;
     }
     let otherLeft = otherobj.x;
     let otherRight = otherobj.x + (otherobj.width);
