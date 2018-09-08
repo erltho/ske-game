@@ -18,9 +18,11 @@ const OBSTACLE_MIN_DISTANCE = 140; // Default 140
 const OBSTACLE_DISTANCE_VARIETY_FACTOR = 30; // Default 30
 const OBSTACLE_END_HEIGHT = 81; // 81
 const OBSTACLE_IMG_HEIGHT = 72; // 72
+const CANVAS_WIDTH = 1000; // 1000
+const GUBBE_SPRITE_WIDTH = 1836; // 1836
 
 // Player Movement
-const PLAYER_MOVEMENT_AREA = 460; // Default 140
+const PLAYER_MOVEMENT_AREA = (GUBBE_SPRITE_WIDTH / 4) - 40; // Default 140
 const PLAYER_SPEED = 2; // Default 2
 
 // Money
@@ -53,14 +55,22 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myGameHelpTextLineFive,
     myGameHelpTextLineSix,
     myGameHelpTextLineSeven,
+    myGameHelpTextBackground2,
+    myGameHelpTextBackground3,
     myPlayerPiece
   } = gameElements;
 
   let aboutToCrashWith = null;
 
   if (myGameArea.frameNo === 0) {
-    myGameArea.thiefScore = parseInt(localStorage.getItem("reactionGameScore"));
+    myGameArea.thiefScore = Math.ceil((parseInt(localStorage.getItem("reactionGameScore")) * 0.25));
     myGameArea.dropScore = Math.ceil(myGameArea.thiefScore / 100);
+    console.log("frame zero");
+
+    if (myGameArea.firstLoop === true){
+      score.update(Math.ceil((parseInt(localStorage.getItem("reactionGameScore")) * 0.75)));
+      myGameArea.firstLoop = false;
+    }
   }
 
   // Gamepad integration
@@ -108,6 +118,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
     // Collision between player and obstacle
     if (myPlayerPiece.interactWith(myObstacles[i])) {
       localStorage.setItem("totalScore", score.get());
+      myGameArea.options = 3;
       myGameArea.stop();
     }
 
@@ -149,6 +160,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
   //////////////
   if (myGameArea.options === 0) {
     myBackground.update(myGameArea);
+    myGameHelpTextBackground2.update(myGameArea);
     myOpponentPiece.update(myGameArea);
     myPlayerPiece.update(myGameArea);
     myScoreBackground.update(myGameArea);
@@ -186,7 +198,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
       myGameHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
       myGameHelpTextLineTwo.update(myGameArea);
       */
-      myGameHelpTextLineThree.text = "En skattesnyter har stukket av med gjelda di";
+      myGameHelpTextLineThree.text = "En skattesnyter har stukket av med 25% av gjelda di";
       myGameHelpTextLineThree.update(myGameArea);
       myGameHelpTextLineFour.text = "Ta igjen tyven for å bli en gjeldsslave igjen!";
       myGameHelpTextLineFour.update(myGameArea);
@@ -194,11 +206,11 @@ function updateGameArea(myGameArea, gameElements, prng) {
       myGameHelpTextLineFive.text = "Prøv å plukke opp gjelda som tyven mister på veien";
       myGameHelpTextLineFive.update(myGameArea);
 
-
+/*
       myGameHelpTextLineSeven.text = "Du kan bevege deg på venstre halvdel av spillområdet";
       myGameHelpTextLineSeven.update(myGameArea);
-
-      myGameHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+*/
+      myGameHelpTextLineSix.text = "Trykk på venstre knapp for å fortsette..";
       myGameHelpTextLineSix.update(myGameArea);
     } else {
       myGameHelpTextLineOne.text = "Siste nivå: Fingerferdighet";
@@ -207,21 +219,23 @@ function updateGameArea(myGameArea, gameElements, prng) {
       myGameHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
       myGameHelpTextLineTwo.update(myGameArea);
       */
-      myGameHelpTextLineThree.text = "En skattesnyter har stukket av med innholdet av skattekassa";
+      myGameHelpTextLineThree.text = "En skattesnyter har stukket av med 25% av innholdet i statskassa";
       myGameHelpTextLineThree.update(myGameArea);
-      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven, men se opp for hinder!";
+      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven så snart som mulig, men se opp for hinder!";
       myGameHelpTextLineFour.update(myGameArea);
 
-      myGameHelpTextLineFive.text = "Prøv å plukke opp pengene som tyven mister på veien";
+      myGameHelpTextLineFive.text = "Tyven blir verdt mindre penger etterhvert som han mister penger,";
       myGameHelpTextLineFive.update(myGameArea);
 
 
-      myGameHelpTextLineSeven.text = "Du kan bevege deg på venstre halvdel av spillområdet";
+      myGameHelpTextLineSeven.text = "men du kan plukke opp det han mister";
       myGameHelpTextLineSeven.update(myGameArea);
 
-      myGameHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+      myGameHelpTextLineSix.text = "Trykk på venstre knapp for å fortsette..";
       myGameHelpTextLineSix.update(myGameArea);
     }
+
+
     if (myGameArea.keys[" "]) {
       myGameArea.options = 1;
     }
@@ -238,6 +252,7 @@ function updateGameArea(myGameArea, gameElements, prng) {
     myBackground.speedX = -1;
     myBackground.newPos();
     myBackground.update(myGameArea);
+    myGameHelpTextBackground2.update(myGameArea);
 
     // Spawns obstacles
     if (myGameArea.frameNo === 1 || objectInterval(myGameArea)) {
@@ -338,7 +353,20 @@ function updateGameArea(myGameArea, gameElements, prng) {
     if (myGameArea.options === 2) {
       localStorage.setItem("totalScore", score.get());
       localStorage.setItem("fangetTyv", 1);
+      myGameHelpTextBackground3.update(myGameArea);
+      myGameHelpTextLineSeven.text = "Du fanget tyven!";
+      myGameHelpTextLineSeven.update(myGameArea);
+      myGameHelpTextLineSix.text = "Trykk på høyre knapp for å se resultatet..";
+      myGameHelpTextLineSix.update(myGameArea);
       myGameArea.stop();
+    }
+
+    if (myGameArea.options === 3) {
+      myGameHelpTextBackground3.update(myGameArea);
+      myGameHelpTextLineSeven.text = "Du møtte veggen!";
+      myGameHelpTextLineSeven.update(myGameArea);
+      myGameHelpTextLineSix.text = "Trykk på høyre knapp for å se resultatet..";
+      myGameHelpTextLineSix.update(myGameArea);
     }
   }
 }
@@ -398,7 +426,8 @@ function gameOne(myGameArea, gameElements) {
     gameOneHelpTextLineThree,
     gameOneHelpTextLineFour,
     gameOneHelpTextLineFive,
-    gameOneHelpTextLineSix
+    gameOneHelpTextLineSix,
+    gameOneHelpTextBackground2
   } = gameElements;
 
   let countDownTimer = Math.abs((myGameArea.countDownTimer - myGameArea.frameNo * 0.015).toFixed(2));
@@ -523,6 +552,9 @@ function gameOne(myGameArea, gameElements) {
     myGameArea.frameNo += 1;
     if (countDownTimer <= 0) {
       localStorage.setItem("buttonMashScore", score.get());
+      gameOneHelpTextBackground2.update(myGameArea);
+      gameOneHelpTextLineSix.text = "Trykk på høyre knapp for å fortsette..";
+      gameOneHelpTextLineSix.update(myGameArea);
       myGameArea.stop();
     } else {
       gameOneCountDownTimer.newPos();
@@ -552,7 +584,7 @@ function gameOne(myGameArea, gameElements) {
     */
     gameOneHelpTextLineThree.text = "Du må pumpe opp noen penger for å holde liv i velferdsstaten";
     gameOneHelpTextLineThree.update(myGameArea);
-    gameOneHelpTextLineFour.text = "Trykk på knappen så mange ganger du klarer i løpet av 10 sekunder";
+    gameOneHelpTextLineFour.text = "Trykk på venstre knapp så mange ganger du klarer i løpet av 10 sekunder";
     gameOneHelpTextLineFour.update(myGameArea);
 
     /*
@@ -560,7 +592,7 @@ function gameOne(myGameArea, gameElements) {
     gameOneHelpTextLineFive.update(myGameArea);
     */
 
-    gameOneHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+    gameOneHelpTextLineSix.text = "Trykk på venstre knapp for å fortsette..";
     gameOneHelpTextLineSix.update(myGameArea);
   }
 
@@ -587,11 +619,13 @@ function gameTwo(myGameArea, gameElements) {
     score,
     gameTwoHelpTextBackground,
     gameTwoHelpTextLineOne,
+    gameTwoHelpTextBackground2,
     gameTwoHelpTextLineTwo,
     gameTwoHelpTextLineThree,
     gameTwoHelpTextLineFour,
     gameTwoHelpTextLineFive,
-    gameTwoHelpTextLineSix
+    gameTwoHelpTextLineSix,
+
   } = gameElements;
 
 
@@ -600,7 +634,7 @@ function gameTwo(myGameArea, gameElements) {
   if (myGameArea.frameNo <= 0) {
     // get score
     score.update(parseInt(localStorage.getItem("buttonMashScore")));
-    gameOneButtonText.text = "Trykk på knappen for å starte spillet";
+    gameOneButtonText.text = "Trykk på venstre knapp for å starte spillet";
     gameTwoKassaSprite.frame = 3;
     gameTwoGubbeSprite.frame = 0;
     myGameArea.reactTime = Math.round(Math.random() * (6 - 3) + 3);
@@ -625,6 +659,7 @@ function gameTwo(myGameArea, gameElements) {
     myGameArea.firstClick = false;
 
     if (myGameArea.options === 2) {
+      myGameArea.options = 4;
       gameOneButtonText.text = "Du trykket for tidlig og mistet halvparten av pengene";
       gameTwoBackground.color = "#df4661";
       gameTwoGubbeSprite.frame = 1;
@@ -636,7 +671,7 @@ function gameTwo(myGameArea, gameElements) {
       gameOneButtonText.text = "Spillet er i gang, vent på signal..";
       myGameArea.options = 2;
     } else if (myGameArea.options === 0) {
-      gameOneButtonText.text = "Trykk på knappen for å starte spillet";
+      gameOneButtonText.text = "Trykk på venstre knapp for å starte spillet";
       myGameArea.options = 1;
     }
 
@@ -685,6 +720,14 @@ function gameTwo(myGameArea, gameElements) {
   gameTwoScoreBackground.update(myGameArea);
   gameOneScoreText.text = score.get() + ",- Kr";
   gameOneScoreText.update(myGameArea);
+  if (myGameArea.options === 4) {
+
+    gameTwoHelpTextBackground2.update(myGameArea);
+    gameTwoHelpTextLineSix.text = "Trykk på høyre knapp for å fortsette..";
+    gameTwoHelpTextLineSix.update(myGameArea)
+  }
+
+
   if (myGameArea.options > 0) {
     gameTwoTextBubble.update(myGameArea);
     gameOneButtonText.update(myGameArea);
@@ -697,17 +740,18 @@ function gameTwo(myGameArea, gameElements) {
     gameTwoHelpTextLineTwo.text = "Følg instruksjonene for å starte spillet";
     gameTwoHelpTextLineTwo.update(myGameArea);
     */
-    gameTwoHelpTextLineThree.text = "Staten er bekymret for lekasje i skattekassa";
+    gameTwoHelpTextLineThree.text = "Staten er bekymret for lekasje i statskassa";
     gameTwoHelpTextLineThree.update(myGameArea);
-    gameTwoHelpTextLineFour.text = "Trykk på knappen når du får beskjed, men ikke før!";
+    gameTwoHelpTextLineFour.text = "Trykk på venstre knapp når du får beskjed, men ikke før!";
     gameTwoHelpTextLineFour.update(myGameArea);
 
     gameTwoHelpTextLineFive.text = "Trykker du for tidlig vil du miste halvparten av pengene i skattekassa";
     gameTwoHelpTextLineFive.update(myGameArea);
 
-    gameTwoHelpTextLineSix.text = "Trykk på en knapp for å fortsette..";
+    gameTwoHelpTextLineSix.text = "Trykk på venstre knapp for å fortsette..";
     gameTwoHelpTextLineSix.update(myGameArea);
   }
+
 
 
 }

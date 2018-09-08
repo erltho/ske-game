@@ -129,13 +129,24 @@ function Component(width, height, color, x, y, type, options) {
       myTop = this.y - (OBSTACLE_MIN_GAP / 10);
     }
     if (type === "sprite") {
-      myRight = this.x + (this.width / options.numberOfFrames);
+      myRight = this.x + (this.width / options.numberOfFrames) - 1;
+      myTop = this.y + 5;
+      myLeft = this.x + 1;
+      myBottom = this.y + (this.height) - 4;
     }
     let otherLeft = otherobj.x;
     let otherRight = otherobj.x + (otherobj.width);
     let otherTop = otherobj.y;
     let otherBottom = otherobj.y + (otherobj.height);
     let interact = true;
+
+    if (otherobj.height === 10 && otherobj.width === 10){
+      otherTop = otherobj.y - 4;
+      otherLeft = otherobj.x - 1;
+      otherRight = otherobj.x + (otherobj.width) + 1;
+      otherBottom = otherobj.y + (otherobj.height) + 5;
+    }
+
     if ((myBottom < otherTop) || (myTop > otherBottom) || (myRight < otherLeft) || (myLeft > otherRight)) {
       interact = false;
     }

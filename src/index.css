@@ -15,6 +15,16 @@ html, body {
     pointer-events: none !important;
 }
 
+#myBtn {
+    position:relative;
+    display:none;
+}
+
+span {
+    display: inline-block;
+    vertical-align: sub;
+}
+
 /*Legacy CSS */
 
 .contentWrapper {

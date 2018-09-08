@@ -2,6 +2,7 @@ import React from 'react'
 import TopBanner from 'aurora-frontend-react-komponenter/TopBanner';
 import FooterContent from 'aurora-frontend-react-komponenter/FooterContent';
 import Grid from 'aurora-frontend-react-komponenter/Grid';
+import Button from "aurora-frontend-react-komponenter/Button";
 
 const MenuLayout = ({children}) => {
   return (
@@ -30,11 +31,12 @@ const MenuLayout = ({children}) => {
                   </ul>
                 </div>
                 <div style={{position: 'relative'}} className="errorMsg">
-                  <div id="strError" className="errorMsgBlock" style={{color: "red"}}></div>
-                  <div style={{bottom: "0", position: "absolute", color: "red"}} id="nrError"
-                       className="errorMsgBlock"></div>
+                  <div id="strError" className="errorMsgBlock" style={{color: "red"}}> </div>
+                  <div id="nrError" style={{color: "red"}} className="errorMsgBlock"> </div>
                 </div>
               </form>
+
+
               <div id={'gubbediv'}
                    style={{
                      marginBottom: "2%",
@@ -44,6 +46,9 @@ const MenuLayout = ({children}) => {
                      position: "absolute"
                    }}>
                 <img src={require("./assets/img/2017/ForsideGubbe.png")} height="200px"/>
+                <span>
+              <h3 style={{textAlign: "right"}}>Trykk på høyre knapp for å starte spillet</h3>
+              </span>
               </div>
             </div>
           </div>
@@ -57,14 +62,13 @@ const MenuLayout = ({children}) => {
               <FooterContent.Logo/>
             </Grid.Col>
             <Grid.Col sm={12} lg={12} xl={3}>
-              All rights reversed
             </Grid.Col>
           </Grid.Row>
         </Grid>
       </FooterContent>
     </div>
   );
-}
+};
 
 
 const GameOverLayout = ({children}) => (
@@ -86,6 +90,7 @@ const GameOverLayout = ({children}) => (
             <h3 className="simpleText" id="fly">0</h3>
             <h1 className="totalScoreText" id="totalS">0</h1>
             <div className="myScore scoreList"></div>
+            <h3 style={{textAlign: "center"}}>Trykk på høyre knapp for å gå tilbake til hovedmenyen</h3>
           </div>
         </div>
       </main>
@@ -98,7 +103,6 @@ const GameOverLayout = ({children}) => (
             <FooterContent.Logo/>
           </Grid.Col>
           <Grid.Col sm={12} lg={12} xl={3}>
-            All rights reversed
           </Grid.Col>
         </Grid.Row>
       </Grid>

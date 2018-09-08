@@ -5,16 +5,16 @@ window.$ = window.jQuery = jQuery;
 
 
 function loadTotalScore() {
-  document.getElementById("antallTrykk").innerHTML = "Antall trykk: " + localStorage.getItem("trykk");
+  document.getElementById("antallTrykk").innerHTML = "Antall trykk i hastighetsspillet: " + localStorage.getItem("trykk");
   if (localStorage.getItem("reaksjon") <= 0) {
-    document.getElementById("reaksjon").innerHTML = "Du trykket for tidlig på reaksjonsspillet";
+    document.getElementById("reaksjon").innerHTML = "Du trykket for tidlig i reaksjonsspillet";
   } else {
     document.getElementById("reaksjon").innerHTML = "Din reaksjon: " + localStorage.getItem("reaksjon") + " ms";
   }
   if ((localStorage.getItem("fangetTyv") <= 0)) {
-    document.getElementById("fly").innerHTML = "Du fanget ikke tyven";
+    document.getElementById("fly").innerHTML = "Du fanget ikke tyven i fingerferdighetspillet";
   } else {
-    document.getElementById("fly").innerHTML = "Du fanget tyven";
+    document.getElementById("fly").innerHTML = "Du fanget tyven i fingerferdighetspillet";
   }
   document.getElementById("totalS").innerHTML = "Total score: " + localStorage.getItem("totalScore") + " kr";
   plotMe();
