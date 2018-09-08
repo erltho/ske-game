@@ -21,12 +21,13 @@ function loadMainMenu() {
     let numberInput = document.getElementById('nrError');
     numberInput.textContent = "";
     document.getElementById("numberField").style.borderColor = "grey";
+  /*
     if ($(this).val().length === 8 && $(this).val().match(/^\d+$/))
       $('#myBtn').prop('disabled', false);
     else
-      $('#myBtn').prop('disabled', true);
-
-
+      //$('#myBtn').prop('disabled', true);
+      console.log("Not valid number");
+*/
   });
   $("#nameField").keyup(function () {
     let nameInput = document.getElementById('strError');
@@ -127,6 +128,9 @@ function plotHigh() {
         class: 'col colHS' + j,
         text: str
       }));
+
+
+      $('.highScore').css('border', '1px solid black');
     }
   }
 }

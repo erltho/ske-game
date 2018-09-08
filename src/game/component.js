@@ -139,6 +139,14 @@ function Component(width, height, color, x, y, type, options) {
     let otherTop = otherobj.y;
     let otherBottom = otherobj.y + (otherobj.height);
     let interact = true;
+
+    if (otherobj.height === 10 && otherobj.width === 10){
+      otherTop = otherobj.y - 4;
+      otherLeft = otherobj.x - 1;
+      otherRight = otherobj.x + (otherobj.width) + 1;
+      otherBottom = otherobj.y + (otherobj.height) + 5;
+    }
+
     if ((myBottom < otherTop) || (myTop > otherBottom) || (myRight < otherLeft) || (myLeft > otherRight)) {
       interact = false;
     }

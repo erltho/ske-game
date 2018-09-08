@@ -29,10 +29,6 @@ class MainMenu extends React.Component {
 
   componentDidMount() {
 
-    this.timerID = setInterval(
-      () => this.tick(),
-      50
-    );
 
     window.addEventListener("keyup", function (event) {
       event.preventDefault();
@@ -55,14 +51,12 @@ class MainMenu extends React.Component {
       window.connectedEvent = e;
     });
 
-    /*
-    if ($(".myRow lineHS2")[0]) {
-      console.log("ku-melk")
-    } else {
-      loadMainMenu();
-    }
-*/
-    loadMainMenu();
+    this.timerID = setInterval(
+      () => this.tick(),
+      50
+    );
+
+//    loadMainMenu();
 
   }
 
@@ -77,7 +71,7 @@ class MainMenu extends React.Component {
       setTimeout(() => document.getElementById("myBtn").disabled = false, 2000);
     } else if (!this.state.gameEnded) {
       loadMainMenu();
-      document.getElementById("myBtn").disabled = true;
+      setTimeout(() => document.getElementById("myBtn").disabled = false, 2000);
       console.log("componentDidUpdate main menu ");
 
     } else {
