@@ -20,6 +20,18 @@ html, body {
     display:none;
 }
 
+#searchField {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+#searchDiv {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+
 span {
     display: inline-block;
     vertical-align: sub;
@@ -32,7 +44,7 @@ span {
     top: 50%;
     height: auto;
     width: 1000px;
-    margin: 50px auto;
+    margin: 10px auto;
     padding: 0;
 }
 

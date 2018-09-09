@@ -282,7 +282,7 @@ let myGameArea = {
     if (firstGameStart === true) {
 
       window.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Enter") {
           //console.log(e.key);
           e.preventDefault();
         }

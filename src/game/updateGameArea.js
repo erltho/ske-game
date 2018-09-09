@@ -65,7 +65,6 @@ function updateGameArea(myGameArea, gameElements, prng) {
   if (myGameArea.frameNo === 0) {
     myGameArea.thiefScore = Math.ceil((parseInt(localStorage.getItem("reactionGameScore")) * 0.25));
     myGameArea.dropScore = Math.ceil(myGameArea.thiefScore / 100);
-    console.log("frame zero");
 
     if (myGameArea.firstLoop === true){
       score.update(Math.ceil((parseInt(localStorage.getItem("reactionGameScore")) * 0.75)));
@@ -221,14 +220,14 @@ function updateGameArea(myGameArea, gameElements, prng) {
       */
       myGameHelpTextLineThree.text = "En skattesnyter har stukket av med 25% av innholdet i statskassa";
       myGameHelpTextLineThree.update(myGameArea);
-      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven så snart som mulig, men se opp for hinder!";
+      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven, men se opp for hinder!";
       myGameHelpTextLineFour.update(myGameArea);
 
-      myGameHelpTextLineFive.text = "Tyven blir verdt mindre penger etterhvert som han mister penger,";
+      myGameHelpTextLineFive.text = "Tyven mister deler av pengene mens han flykter,";
       myGameHelpTextLineFive.update(myGameArea);
 
 
-      myGameHelpTextLineSeven.text = "men du kan plukke opp det han mister";
+      myGameHelpTextLineSeven.text = "plukk dem opp for å ikke miste dem for godt";
       myGameHelpTextLineSeven.update(myGameArea);
 
       myGameHelpTextLineSix.text = "Trykk på venstre knapp for å fortsette..";
@@ -553,7 +552,7 @@ function gameOne(myGameArea, gameElements) {
     if (countDownTimer <= 0) {
       localStorage.setItem("buttonMashScore", score.get());
       gameOneHelpTextBackground2.update(myGameArea);
-      gameOneHelpTextLineSix.text = "Trykk på høyre knapp for å fortsette..";
+      gameOneHelpTextLineSix.text = "Trykk på høyre knapp for å gå til neste spill..";
       gameOneHelpTextLineSix.update(myGameArea);
       myGameArea.stop();
     } else {
@@ -723,7 +722,7 @@ function gameTwo(myGameArea, gameElements) {
   if (myGameArea.options === 4) {
 
     gameTwoHelpTextBackground2.update(myGameArea);
-    gameTwoHelpTextLineSix.text = "Trykk på høyre knapp for å fortsette..";
+    gameTwoHelpTextLineSix.text = "Trykk på høyre knapp for å gå til neste spill..";
     gameTwoHelpTextLineSix.update(myGameArea)
   }
 
