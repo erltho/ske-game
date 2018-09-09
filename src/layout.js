@@ -14,11 +14,17 @@ const MenuLayout = ({children}) => {
         title="Skattepumpa"
       />
       <div id="ske-layout__body">
+        <div id="searchDiv">
+          <Button id="searchNumber"className="searchButton">Søk</Button>
+          <Button id="topFive" className="searchButton">top5</Button>
+        </div>
+        <input id='search' type="text" placeholder="Søk etter din plassering (tlf)"/>
+        <h3 className="simpleText" id="antallSpillere">0</h3>
         <main className="ske-layout__kjerne">
           <div className="contentWrapper">
             <div className="content colorHoved">
               <img src={require("./assets/img/2017/Skattepumpa.png")} height="" className="imgCenter"/>
-              <div className="highScore scoreList"></div>
+              <div id='theList' className="highScore scoreList"></div>
               <form id='nameForm'>
                 <div className="inputList">
                   <ul className="input-list style-2 clearfix">

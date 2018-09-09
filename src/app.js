@@ -56,7 +56,7 @@ class MainMenu extends React.Component {
       50
     );
 
-//    loadMainMenu();
+    loadMainMenu();
 
   }
 
@@ -68,10 +68,10 @@ class MainMenu extends React.Component {
       loadTotalScore();
       console.log("Total score loaded");
       document.getElementById("myBtn").disabled = true;
-      setTimeout(() => document.getElementById("myBtn").disabled = false, 2000);
+      setTimeout(() => document.getElementById("myBtn").disabled = false, 1000);
+      console.log("componentDidUpdate total score ")
     } else if (!this.state.gameEnded) {
       loadMainMenu();
-      setTimeout(() => document.getElementById("myBtn").disabled = false, 2000);
       console.log("componentDidUpdate main menu ");
 
     } else {

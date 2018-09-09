@@ -17,17 +17,18 @@ function loadMainMenu() {
   localStorage.setItem("totalScore", 0);
 
   $('#myBtn').prop("disabled", true);
+  setTimeout(() => document.getElementById("myBtn").disabled = false, 1000);
   $("#numberField").keyup(function () {
     let numberInput = document.getElementById('nrError');
     numberInput.textContent = "";
     document.getElementById("numberField").style.borderColor = "grey";
-  /*
-    if ($(this).val().length === 8 && $(this).val().match(/^\d+$/))
-      $('#myBtn').prop('disabled', false);
-    else
-      //$('#myBtn').prop('disabled', true);
-      console.log("Not valid number");
-*/
+    /*
+      if ($(this).val().length === 8 && $(this).val().match(/^\d+$/))
+        $('#myBtn').prop('disabled', false);
+      else
+        //$('#myBtn').prop('disabled', true);
+        console.log("Not valid number");
+  */
   });
   $("#nameField").keyup(function () {
     let nameInput = document.getElementById('strError');
@@ -91,48 +92,62 @@ function inputValidator() {
 
 }
 
+function searchName() {
+
+}
+
 
 function plotHigh() {
   var scores = JSON.parse(localStorage.scoreBoard);
   scores = _.sortBy(scores, function (o) {
     return parseInt(o.totalScore);
   }).reverse();
+  let items = document.getElementById("theList").childElementCount;
 
-  for (var i = 0; i < 5; i++) {
-
-    $('.highScore').append($('<div />', {
-      class: 'myRow lineHS' + i
-    }));
-
-    if (i % 2 === 0) {
-      $('.lineHS' + i).css('background-color', '#e8d6dc');
-    }
-
-    for (var j = 0; j < 3; j++) {
-
-      var str;
-
-      if (scores[i] == null) {
-        str = "--"
-      } else {
-        if (j === 0) {
-          str = i + 1;
-        } else if (j === 1) {
-          str = scores[i].navn;
-        } else {
-          str = scores[i].totalScore;
-        }
-      }
-
-      $('.lineHS' + i).append($('<div />', {
-        class: 'col colHS' + j,
-        text: str
-      }));
-
-
-      $('.highScore').css('border', '1px solid black');
+  console.log(scores.length);
+  document.getElementById("antallSpillere").innerHTML = "Antall spillere: " + scores.length;
+  if (items >= 5) {
+    var myNode = document.getElementById("theList");
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
     }
   }
+    for (var i = 0; i < 5; i++) {
+
+      $('.highScore').append($('<div />', {
+        class: 'myRow lineHS' + i
+      }));
+
+      if (i % 2 === 0) {
+        $('.lineHS' + i).css('background-color', '#e8d6dc');
+      }
+
+      for (var j = 0; j < 3; j++) {
+
+        var str;
+
+        if (scores[i] == null) {
+          str = "--"
+        } else {
+          if (j === 0) {
+            str = i + 1;
+          } else if (j === 1) {
+            str = scores[i].navn;
+          } else {
+            str = scores[i].totalScore;
+          }
+        }
+
+        $('.lineHS' + i).append($('<div />', {
+          class: 'col colHS' + j,
+          text: str
+        }));
+
+
+        $('.highScore').css('border', '1px solid black');
+      }
+    }
+
 }
 
 
