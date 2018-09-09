@@ -18,7 +18,7 @@ const MenuLayout = ({children}) => {
           <Button id="searchNumber"className="searchButton">Søk</Button>
           <Button id="topFive" className="searchButton">top5</Button>
         </div>
-        <input id='search' type="text" placeholder="Søk etter din plassering (tlf)"/>
+        <input id='searchField' type="text" placeholder="Søk etter din plassering (tlf)"/>
         <h3 className="simpleText" id="antallSpillere">0</h3>
         <main className="ske-layout__kjerne">
           <div className="contentWrapper">
@@ -29,7 +29,7 @@ const MenuLayout = ({children}) => {
                 <div className="inputList">
                   <ul className="input-list style-2 clearfix">
                     <li>
-                      <input id='nameField' type="text" placeholder="Ditt navn"/>
+                      <input id='nameField'type="text" placeholder="Ditt navn"/>
                     </li>
                     <li>
                       <input id='numberField' type="text" placeholder="Ditt telefonnummer"/>

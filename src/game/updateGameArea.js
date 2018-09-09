@@ -220,14 +220,14 @@ function updateGameArea(myGameArea, gameElements, prng) {
       */
       myGameHelpTextLineThree.text = "En skattesnyter har stukket av med 25% av innholdet i statskassa";
       myGameHelpTextLineThree.update(myGameArea);
-      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven så snart som mulig, men se opp for hinder!";
+      myGameHelpTextLineFour.text = "Bruk joysticken til å ta igjen tyven, men se opp for hinder!";
       myGameHelpTextLineFour.update(myGameArea);
 
-      myGameHelpTextLineFive.text = "Tyven blir verdt mindre penger etterhvert som han mister penger,";
+      myGameHelpTextLineFive.text = "Tyven mister deler av pengene mens han flykter,";
       myGameHelpTextLineFive.update(myGameArea);
 
 
-      myGameHelpTextLineSeven.text = "men du kan plukke opp det han mister";
+      myGameHelpTextLineSeven.text = "plukk dem opp for å ikke miste dem for godt";
       myGameHelpTextLineSeven.update(myGameArea);
 
       myGameHelpTextLineSix.text = "Trykk på venstre knapp for å fortsette..";

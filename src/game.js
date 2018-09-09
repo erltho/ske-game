@@ -268,7 +268,7 @@ let myGameArea = {
     this.frameNo = 0;
     this.firstClick = true;
     this.readyToFire = true;
-    this.countDownTimer = 1; // Default 10
+    this.countDownTimer = 10; // Default 10
     this.counter = 0;
     this.reactTime = 0;
     this.options = 0;
@@ -282,7 +282,7 @@ let myGameArea = {
     if (firstGameStart === true) {
 
       window.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Enter") {
           //console.log(e.key);
           e.preventDefault();
         }
