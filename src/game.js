@@ -167,13 +167,7 @@ function checkInput(endGameFun, newGameFun) {
 
 function startGame(endGameFun, newGameFun) {
 
-  //console.log("bar");
-  //endGameFun();
-
-  // Replace ske-layout__body with canvas
-
   if (gameType === -1) {
-    //console.log("ny funksjon");
     newGameFun();
   }
 
@@ -283,7 +277,6 @@ let myGameArea = {
 
       window.addEventListener('keydown', (e) => {
         if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Enter") {
-          //console.log(e.key);
           e.preventDefault();
         }
         this.keys[e.key] = (e.type === "keydown");
@@ -296,10 +289,7 @@ let myGameArea = {
     }
 
     window.addEventListener('gamepadconnected', (e) => {
-      //console.log("Trouble");
       this.gamepadConnected = e.gamepad.connected;
-      //console.log(e.gamepad.connected);
-      //console.log(e);
       window.connectedEvent = e;
     });
 
